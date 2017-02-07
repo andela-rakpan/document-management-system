@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": null,
+    "password": null,
+    "database": "dms",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": null,
+    "password": null,
+    "database": "dms",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": null,
+    "password": null,
+    "database": "dms",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres"
+  }
+}
