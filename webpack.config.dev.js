@@ -1,17 +1,23 @@
-const path = require('path');
-const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+import webpack from 'webpack';
+import path from 'path';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
-module.exports = {
-  devtool: 'source-map',
+export default {
+  debug: true,
+  devtool: 'cheap-module-eval-source-map',
+  noInfo: false,
   entry: [
-    'webpack-hot-middleware/client',
+    'webpack-hot-middleware/client?reload=true',
     './client/index.js'
   ],
+  target: 'web',
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
     publicPath: '/static/'
+  },
+  devServer: {
+    contentBase: './client'
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
