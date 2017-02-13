@@ -1,33 +1,103 @@
+import jwt from 'jsonwebtoken';
 import db from '../models';
+import Helpers from './helpers';
+
+/**
+ * Secret token for jsonwebtoken
+ */
+const secret = process.env.SECRET || 'my secret key';
 
 const usersController = {
-  create(req, res) {
-    return db.User
-      .create({
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        email: req.body.email,
-        password: req.body.password,
-        roleId: req.body.roleId,
+  /**
+   * Login a user
+   * @param {Object} req - Request object
+   * @param {Object} res - Response object
+   * @returns {Object} Response object
+   */
+  login(req, res) {
+    db.User.findOne({ where: { email: req.body.email } })
+      .then((user) => {
+        const validPassword = user.validatePassword(req.body.password);
+        if (user && validPassword) {
+          const token = jwt.sign({ userId: user.id, roleId: user.roleId}, 
+            secret, { expiresIn: '1 day' });
+          res.status(200).send({token});
+        } else {
+          res.status(401)
+            .send({ message: 'Invalid Login Details!' });
+        }
       })
-      .then(user => res.status(201).send(user))
       .catch(error => res.status(400).send(error));
   },
 
+  /**
+   * logout a user
+   *
+   * @param  {Objec} req - Request Object
+   * @param  {Object} res - Response Object
+   * @returns {Void}     Returns Void
+   */
+  logout(req, res) {
+    res.status(200).send({ message: 'Successfully logged out.' });
+  },
+
+ /**
+   * Create a user
+   * @param {Object} req - Request object
+   * @param {Object} res - Response object
+   * @returns {Object} Response object
+   */
+  create(req, res) {
+    db.User.findOne({ where: { email: req.body.email } })
+      .then((existingUser) => {
+        if (existingUser) {
+          return res.status(400).send({ 
+            message: `Oops! A user already exists with this email: ${req.body.email}` 
+          });
+        }
+
+        if (!req.body.roleId) {
+          req.body.roleId = 2;
+        }
+
+        db.User
+          .create({
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            email: req.body.email,
+            password: req.body.password,
+            roleId: req.body.roleId,
+          })
+        .then((user) => {
+          const token = jwt.sign({ userId: user.id, roleId: user.roleId}, 
+            secret, { expiresIn: '1 day' });
+          res.status(201).send({token});
+        })
+        .catch(error => res.status(400).send(error));
+      });
+  },
+
+   /**
+   * List all users
+   * @param {Object} req - Request object
+   * @param {Object} res - Response object
+   * @returns {Object} Response object
+   */
   list(req, res) {
-    return db.User
-      .findAll({
-        include: [{
-          model: db.Document,
-          as: 'documents',
-        }],
-      })
+    db.User
+      .findAll()
       .then(users => res.status(200).send(users))
       .catch(error => res.status(400).send(error));
   },
 
+   /**
+   * Retrive a user's details
+   * @param {Object} req - Request object
+   * @param {Object} res - Response object
+   * @returns {Object} Response object
+   */
   retrieveUser(req, res) {
-    return db.User
+    db.User
       .findById(req.params.id)
       .then((user) => {
         if (!user) {
@@ -35,13 +105,24 @@ const usersController = {
             message: 'User Not Found',
           });
         }
-        return res.status(200).send(user);
+        if (Helpers.isAdmin(req) || Helpers.isCurrentUser(req, user.id)) {
+          res.status(200).send(user);
+        } else {
+          res.status(403)
+            .send({ message: 'You can only retrieve your information!' });
+        }
       })
       .catch(error => res.status(400).send(error));
   },
 
+   /**
+   * Retrieve a user's details with documents owned by the user
+   * @param {Object} req - Request object
+   * @param {Object} res - Response object
+   * @returns {Object} Response object
+   */
   retrieveDocuments(req, res) {
-    return db.User
+    db.User
       .findById(req.params.id, {
         include: [{
           model: db.Document,
@@ -54,13 +135,25 @@ const usersController = {
             message: 'User Not Found',
           });
         }
-        return res.status(200).send(user);
+
+        if (Helpers.isAdmin(req) || Helpers.isCurrentUser(req, user.id)) {
+          res.status(200).send(user);
+        } else {
+          res.status(403)
+            .send({ message: 'You can only retrieve your documents!' });
+        }
       })
       .catch(error => res.status(400).send(error));
   },
 
-  update(req, res) {
-    return db.User
+   /**
+   * Update a user
+   * @param {Object} req - Request object
+   * @param {Object} res - Response object
+   * @returns {Object} Response object
+   */
+  updateUser(req, res) {
+    db.User
       .findById(req.params.id, {
         include: [{
           model: db.Document,
@@ -73,16 +166,28 @@ const usersController = {
             message: 'User Not Found',
           });
         }
-        return user
-          .update(req.body, { fields: Object.keys(req.body) })
-          .then(updatedUser => res.status(200).send(updatedUser))
-          .catch(error => res.status(400).send(error));
+
+        if (Helpers.isAdmin(req) || Helpers.isCurrentUser(req, user.id)) {
+          user
+            .update(req.body, { fields: Object.keys(req.body) })
+            .then(updatedUser => res.status(200).send(updatedUser))
+            .catch(error => res.status(400).send(error)); 
+        } else {
+          res.status(403)
+            .send({ message: 'You can only update your details!' });
+        }
       })
       .catch(error => res.status(400).send(error));
   },
 
-  destroy(req, res) {
-    return db.User
+   /**
+   * Delete a user
+   * @param {Object} req - Request object
+   * @param {Object} res - Response object
+   * @returns {Object} Response object
+   */
+  deleteUser(req, res) {
+    db.User
       .findById(req.params.id)
       .then((user) => {
         if (!user) {
@@ -90,7 +195,8 @@ const usersController = {
             message: 'User Not Found',
           });
         }
-        return user
+        
+        user
           .destroy()
           .then(() => res.status(200).send({
             message: 'User deleted successfully.',
