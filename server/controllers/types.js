@@ -10,7 +10,7 @@ const typesController = {
   create(req, res) {
     db.Type
       .create({
-        title: req.body.title,
+        title: req.body.title
       })
       .then(type => res.status(201).send(type))
       .catch(error => res.status(400).send(error));

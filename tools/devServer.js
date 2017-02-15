@@ -48,3 +48,5 @@ server.listen(port, (err) => {
     open(`http://localhost:${port}`);
   }
 });
+
+export default app;

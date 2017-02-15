@@ -4,7 +4,7 @@ import Authentication from '../middlewares/authentication';
 const rolesRoute = (router) => {
   // Create a new type or get all roles
   router.route('/roles')
-   .post(rolesController.create)
+   .post(Authentication.verifyToken, Authentication.verifyAdmin, rolesController.create)
    .get(Authentication.verifyToken, Authentication.verifyAdmin, rolesController.list);
 
   // Get, update and delete a particular role
