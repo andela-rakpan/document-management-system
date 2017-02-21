@@ -25,7 +25,7 @@ const typesController = {
   list(req, res) {
     db.Type
       .all()
-      .then(types => res.status(201).send(types))
+      .then(types => res.status(200).send(types))
       .catch(error => res.status(400).send(error));
   },
 
@@ -94,7 +94,7 @@ const typesController = {
           });
         }
 
-        db.Type
+        type
           .destroy()
           .then(() => res.status(200).send({
             message: 'Type deleted successfully.',
