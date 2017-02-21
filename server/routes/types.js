@@ -4,12 +4,12 @@ import Authentication from '../middlewares/authentication';
 const typesRoute = (router) => {
   // Create a new type or get all types
   router.route('/types')
-   .post(Authentication.verifyToken, Authentication.verifyAdmin, typesController.create)
-   .get(Authentication.verifyToken, Authentication.verifyAdmin, typesController.list);
+   .post(Authentication.verifyToken, typesController.create)
+   .get(Authentication.verifyToken, typesController.list);
 
   // Get, update and delete a particular type
   router.route('/types/:id')
-    .get(Authentication.verifyToken, Authentication.verifyAdmin, typesController.retrieve)
+    .get(Authentication.verifyToken, typesController.retrieve)
     .put(Authentication.verifyToken, Authentication.verifyAdmin, typesController.update)
     .delete(Authentication.verifyToken, Authentication.verifyAdmin, typesController.delete);
 };

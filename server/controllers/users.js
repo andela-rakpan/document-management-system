@@ -17,28 +17,17 @@ const usersController = {
   login(req, res) {
     db.User.findOne({ where: { email: req.body.email } })
       .then((user) => {
-        const validPassword = user.validatePassword(req.body.password);
-        if (user && validPassword) {
-          const token = jwt.sign({ userId: user.id, roleId: user.roleId}, 
+        if (user) {
+          if (user.validatePassword(req.body.password)) {
+            const token = jwt.sign({ userId: user.id, roleId: user.roleId}, 
             secret, { expiresIn: '1 day' });
-          res.status(200).send({token});
-        } else {
-          res.status(401)
-            .send({ message: 'Invalid Login Details!' });
+            return res.status(200).send({token, user});
+          }
         }
+        res.status(401)
+            .send({ message: 'Invalid Login Details!' });
       })
       .catch(error => res.status(400).send(error));
-  },
-
-  /**
-   * logout a user
-   *
-   * @param  {Objec} req - Request Object
-   * @param  {Object} res - Response Object
-   * @returns {Void}     Returns Void
-   */
-  logout(req, res) {
-    res.status(200).send({ message: 'Successfully logged out.' });
   },
 
  /**
@@ -48,6 +37,7 @@ const usersController = {
    * @returns {Object} Response object
    */
   create(req, res) {
+    //Helpers.createRoles(req);
     db.User.findOne({ where: { email: req.body.email } })
       .then((existingUser) => {
         if (existingUser) {
@@ -68,13 +58,14 @@ const usersController = {
             password: req.body.password,
             roleId: req.body.roleId,
           })
-        .then((user) => {
-          const token = jwt.sign({ userId: user.id, roleId: user.roleId}, 
+          .then((user) => {
+            const token = jwt.sign({ userId: user.id, roleId: user.roleId}, 
             secret, { expiresIn: '1 day' });
-          res.status(201).send({token});
+            res.status(201).send({token, user});
+          })
+          .catch(error => res.status(400).send(error));
         })
         .catch(error => res.status(400).send(error));
-      });
   },
 
    /**
@@ -191,7 +182,7 @@ const usersController = {
       .findById(req.params.id)
       .then((user) => {
         if (!user) {
-          return res.status(400).send({
+          return res.status(404).send({
             message: 'User Not Found',
           });
         }

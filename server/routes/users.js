@@ -21,9 +21,6 @@ const usersRoute = (router) => {
   router.route('/users/login')
     .post(usersController.login);
 
-  // Log our a user
-  router.route('/users/logout')
-    .post(usersController.logout);
 };
 
 export default usersRoute;
