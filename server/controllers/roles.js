@@ -1,38 +1,69 @@
 import db from '../models';
 
 const rolesController = {
+  /**
+   * Create a new Role
+   * @param {Object} req - Request object
+   * @param {Object} res - Response object
+   * @returns {Object} Response object
+   */
   create(req, res) {
-    return db.Role
+    db.Role
       .create({
-        title: req.body.title,
+        title: req.body.title
       })
       .then(role => res.status(201).send(role))
       .catch(error => res.status(400).send(error));
   },
 
+  /**
+   * List all Roles
+   * @param {Object} req - Request object
+   * @param {Object} res - Response object
+   * @returns {Object} Response object
+   */
   list(req, res) {
-    return db.Role
-      .all()
-      .then(roles => res.status(201).send(roles))
-      .catch(error => res.status(400).send(error));
+    let query = {};
+    query.limit = Number(req.query.limit) !== 'NaN'? req.query.limit : 10;
+    query.offset = Number(req.query.limit) !== 'NaN'? req.query.offset : 0;
+    db.Role
+      .all(query)
+      .then(roles => res.status(200).send(roles));
   },
 
+  /**
+   * Retrive a Role based on id with associated users on that role
+   * @param {Object} req - Request object
+   * @param {Object} res - Response object
+   * @returns {Object} Response object
+   */
   retrieve(req, res) {
-    return db.Role
-      .findById(req.params.id)
+    db.Role
+      .findById(req.params.id, {
+        include: [{
+          model: db.User,
+          as: 'users',
+        }],
+      })
       .then((role) => {
         if (!role) {
           return res.status(404).send({
             message: 'Role Not Found',
           });
         }
-        return res.status(200).send(role);
+        res.status(200).send(role);
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(404).send(error));
   },
 
+  /**
+   * Update a Role based on id
+   * @param {Object} req - Request object
+   * @param {Object} res - Response object
+   * @returns {Object} Response object
+   */
   update(req, res) {
-    return db.Role
+    db.Role
       .findById(req.params.id)
       .then((role) => {
         if (!role) {
@@ -41,16 +72,23 @@ const rolesController = {
           });
         }
 
-        return role
-          .update(req.body, { fields: Object.keys(req.body) })
-          .then(updatedRole => res.status(200).send(updatedRole))
-          .catch(error => res.status(400).send(error));
+        role
+          .update(req.body, {
+            fields: Object.keys(req.body)
+          })
+          .then(updatedRole => res.status(200).send(updatedRole));
       })
       .catch(error => res.status(400).send(error));
   },
 
-  destroy(req, res) {
-    return db.Role
+  /**
+   * Delete a Role based on id
+   * @param {Object} req - Request object
+   * @param {Object} res - Response object
+   * @returns {Object} Response object
+   */
+  delete(req, res) {
+    db.Role
       .findById(req.params.id)
       .then((role) => {
         if (!role) {
@@ -59,12 +97,11 @@ const rolesController = {
           });
         }
 
-        return db.Role
+        role
           .destroy()
           .then(() => res.status(200).send({
             message: 'Role deleted successfully.',
-          }))
-          .catch(error => res.status(400).send(error));
+          }));
       })
       .catch(error => res.status(400).send(error));
   },

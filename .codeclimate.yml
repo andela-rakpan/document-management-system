@@ -1,26 +1,19 @@
----
 engines:
-  duplication:
-    enabled: true
-    config:
-      languages:
-      - ruby
-      - javascript
-      - python
-      - php
   eslint:
     enabled: true
-  fixme:
-    enabled: true
+    channel: "eslint-3"
+    checks:
+      import/no-unresolved:
+        enabled: false
+  duplication:
+    enabled: false
+    config:
+      languages:
+        - javascript
+
 ratings:
   paths:
-  - "**.inc"
-  - "**.js"
-  - "**.jsx"
-  - "**.module"
-  - "**.php"
-  - "**.py"
-  - "**.rb"
-exclude_paths:
-- server/test
-- client/test
+    - "**.js"
+    - "**.jsx"
+  exclude_paths:
+    - test

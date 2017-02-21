@@ -1,3 +1,5 @@
+import bcrypt from 'bcrypt-nodejs';
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     firstname: {
@@ -30,6 +32,39 @@ module.exports = (sequelize, DataTypes) => {
         });
       },
     },
+    instanceMethods: {
+      /**
+       * Compare plain password to user's hashed password
+       * @method
+       * @param {String} password
+       * @returns {Boolean} password match: true or false
+       */
+      validatePassword(password) {
+        return bcrypt.compareSync(password, this.password);
+      },
+
+      /**
+       * Hash the password
+       * @method
+       * @returns {Void} no return
+       */
+      hashPassword() {
+        const salt = bcrypt.genSaltSync(8);
+        this.password = bcrypt.hashSync(this.password, salt);
+      }
+    },
+
+    hooks: {
+      beforeCreate(user) {
+        user.hashPassword();
+      },
+
+      beforeUpdate(user) {
+        if (user._changed.password) {
+          user.hashPassword();
+        }
+      }
+    }
   });
   return User;
 };
