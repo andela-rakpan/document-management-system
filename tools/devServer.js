@@ -5,7 +5,6 @@ import logger from 'morgan';
 import webpack from 'webpack';
 import bodyParser from 'body-parser';
 import http from 'http';
-import open from 'open';
 import path from 'path';
 import config from '../webpack.config.dev';
 import routes from '../server/routes';
@@ -28,12 +27,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 routes(router);
 app.use('/api', router);
 
-app.use(require('webpack-dev-middleware')(compiler, {
-  noInfo: true,
-  publicPath: config.output.publicPath
-}));
+// app.use(require('webpack-dev-middleware')(compiler, {
+//   noInfo: true,
+//   publicPath: config.output.publicPath
+// }));
 
-app.use(require('webpack-hot-middleware')(compiler));
+// app.use(require('webpack-hot-middleware')(compiler));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/index.html'));
@@ -45,7 +44,6 @@ server.listen(port, (err) => {
     console.log(err);
   } else {
     console.log(`The server is running at localhost:${port}`);
-    open(`http://localhost:${port}`);
   }
 });
 
