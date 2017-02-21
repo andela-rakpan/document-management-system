@@ -151,6 +151,14 @@ describe('User API:', () => {
             done();
           });
       });
+      it('should not return the document if supplied non-integer id', (done) => {
+        request.get('/api/documents/id')
+          .set({ 'x-access-token': adminUserToken })
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
+            done();
+          });
+      });
       it('should not return document if NO token is provided', (done) => {
         request.get(`/api/documents/${document1.id}`)
           .end((error, response) => {
@@ -209,6 +217,14 @@ describe('User API:', () => {
           .set({ 'x-access-token': regularUserToken })
           .end((error, response) => {
             expect(response.status).to.equal(404);
+            done();
+          });
+      });
+      it(`should not return user's documents if supplied non-integer id`, (done) => {
+        request.get('/api/users/id/documents')
+          .set({ 'x-access-token': regularUserToken })
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
             done();
           });
       });
@@ -276,6 +292,15 @@ describe('User API:', () => {
             done();
           });
       });
+      it('should not edit document if supplied non-integer id', (done) => {
+        request.put('/api/documents/id')
+          .set({ 'x-access-token': adminUserToken })
+          .send(fieldsToUpdate)
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
+            done();
+          });
+      });
       it('should not edit document if NO token is provided', (done) => {
         request.put(`/api/documents/${document1.id}`)
           .end((error, response) => {
@@ -339,6 +364,14 @@ describe('User API:', () => {
           .set({ 'x-access-token': adminUserToken })
           .end((error, response) => {
             expect(response.status).to.equal(404);
+            done();
+          });
+      });
+      it('should not delete document if supplied non-integer id', (done) => {
+        request.delete('/api/documents/id')
+          .set({ 'x-access-token': adminUserToken })
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
             done();
           });
       });

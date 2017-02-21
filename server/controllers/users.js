@@ -26,8 +26,7 @@ const usersController = {
         }
         res.status(401)
             .send({ message: 'Invalid Login Details!' });
-      })
-      .catch(error => res.status(400).send(error));
+      });
   },
 
  /**
@@ -37,7 +36,6 @@ const usersController = {
    * @returns {Object} Response object
    */
   create(req, res) {
-    //Helpers.createRoles(req);
     db.User.findOne({ where: { email: req.body.email } })
       .then((existingUser) => {
         if (existingUser) {
@@ -64,8 +62,7 @@ const usersController = {
             res.status(201).send({token, user});
           })
           .catch(error => res.status(400).send(error));
-        })
-        .catch(error => res.status(400).send(error));
+        });
   },
 
    /**
@@ -75,10 +72,12 @@ const usersController = {
    * @returns {Object} Response object
    */
   list(req, res) {
+    let query = {};
+    query.limit = Number(req.query.limit) !== 'NaN'? req.query.limit : 10;
+    query.offset = Number(req.query.limit) !== 'NaN'? req.query.offset : 0;
     db.User
-      .findAll()
-      .then(users => res.status(200).send(users))
-      .catch(error => res.status(400).send(error));
+      .findAll(query)
+      .then(users => res.status(200).send(users));
   },
 
    /**
@@ -161,8 +160,7 @@ const usersController = {
         if (Helpers.isAdmin(req) || Helpers.isCurrentUser(req, user.id)) {
           user
             .update(req.body, { fields: Object.keys(req.body) })
-            .then(updatedUser => res.status(200).send(updatedUser))
-            .catch(error => res.status(400).send(error)); 
+            .then(updatedUser => res.status(200).send(updatedUser));
         } else {
           res.status(403)
             .send({ message: 'You can only update your details!' });
@@ -191,8 +189,7 @@ const usersController = {
           .destroy()
           .then(() => res.status(200).send({
             message: 'User deleted successfully.',
-          }))
-          .catch(error => res.status(400).send(error));
+          }));
       })
       .catch(error => res.status(400).send(error));
   },

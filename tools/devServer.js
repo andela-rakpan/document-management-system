@@ -34,17 +34,9 @@ app.use('/api', router);
 
 // app.use(require('webpack-hot-middleware')(compiler));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/index.html'));
-});
-
 const server = http.createServer(app);
 server.listen(port, (err) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log(`The server is running at localhost:${port}`);
-  }
+  console.log(`The server is running at localhost:${port}`);
 });
 
 export default app;

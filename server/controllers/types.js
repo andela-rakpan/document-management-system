@@ -23,10 +23,12 @@ const typesController = {
    * @returns {Object} Response object
    */
   list(req, res) {
+    let query = {};
+    query.limit = Number(req.query.limit) !== 'NaN'? req.query.limit : 10;
+    query.offset = Number(req.query.limit) !== 'NaN'? req.query.offset : 0;
     db.Type
-      .all()
-      .then(types => res.status(200).send(types))
-      .catch(error => res.status(400).send(error));
+      .all(query)
+      .then(types => res.status(200).send(types));
   },
 
   /**
@@ -72,8 +74,7 @@ const typesController = {
 
         type
           .update(req.body, { fields: Object.keys(req.body) })
-          .then(updatedType => res.status(200).send(updatedType))
-          .catch(error => res.status(400).send(error));
+          .then(updatedType => res.status(200).send(updatedType));
       })
       .catch(error => res.status(400).send(error));
   },
@@ -98,8 +99,7 @@ const typesController = {
           .destroy()
           .then(() => res.status(200).send({
             message: 'Type deleted successfully.',
-          }))
-          .catch(error => res.status(400).send(error));
+          }));
       })
       .catch(error => res.status(400).send(error));
   },

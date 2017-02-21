@@ -129,6 +129,14 @@ describe('Type API:', () => {
             done();
           });
       });
+      it('should not return the type if supplied non-integer id', (done) => {
+        request.get('/api/types/id')
+          .set({ 'x-access-token': adminUserToken })
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
+            done();
+          });
+      });
       it('should not return the type if supplied token is invalid', (done) => {
         request.get(`/api/types/${type.id}`)
           .set({ 'x-access-token': 'this-is-an-invalid-token' })
@@ -156,6 +164,16 @@ describe('Type API:', () => {
           .send(fieldsToUpdate)
           .end((error, response) => {
             expect(response.status).to.equal(404);
+            done();
+          });
+      });
+      it('should not edit type if non-integer id is supplied', (done) => {
+        const fieldsToUpdate = { title: 'official' };
+        request.put('/api/types/id')
+          .set({ 'x-access-token': adminUserToken })
+          .send(fieldsToUpdate)
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
             done();
           });
       });
@@ -189,6 +207,14 @@ describe('Type API:', () => {
           .set({ 'x-access-token': adminUserToken })
           .end((error, response) => {
             expect(response.status).to.equal(404);
+            done();
+          });
+      });
+      it('should not delete type if non-integer id is supplied', (done) => {
+        request.delete('/api/types/id')
+          .set({ 'x-access-token': adminUserToken })
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
             done();
           });
       });

@@ -40,14 +40,14 @@ describe('User API:', () => {
     describe('GET: (/api/search/documents/public/:term) - ', () => {
       const term = 'the';
       it('should not return document(s) if NO token is provided', (done) => {
-        request.get(`/api/search/documents/public/${term}`)
+        request.get(`/api/search/documents/public?term=${term}`)
           .end((error, response) => {
             expect(response.status).to.equal(401);
             done();
           });
       });
       it('should not return document(s) if token is invalid', (done) => {
-        request.get(`/api/search/documents/public/${term}`)
+        request.get(`/api/search/documents/public?term=${term}`)
           .set({ 'x-access-token': 'this-is-an-invalid-token' })
           .end((error, response) => {
             expect(response.status).to.equal(401);
@@ -55,7 +55,7 @@ describe('User API:', () => {
           });
       });
       it('should return all matching document(s) if user is admin', (done) => {
-        request.get(`/api/search/documents/public/${term}`)
+        request.get(`/api/search/documents/public?term=${term}`)
           .set({ 'x-access-token': adminUserToken })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -65,7 +65,7 @@ describe('User API:', () => {
           });
       });
       it(`should return all 'public' matching document(s) if user is not admin`, (done) => {
-        request.get(`/api/search/documents/public/${term}`)
+        request.get(`/api/search/documents/public?term=${term}`)
           .set({ 'x-access-token': regularUserToken })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -80,25 +80,34 @@ describe('User API:', () => {
     });
 
     // GET requests - Search owner document(s) for specified term(s)
-    describe('GET: (/api/search/documents/:term) - ', () => {
+    describe('GET: (/api/search/documents) - ', () => {
       const term = 'the';
       it('should not return document(s) if NO token is provided', (done) => {
-        request.get(`/api/search/documents/${term}`)
+        request.get(`/api/search/documents?term=${term}`)
           .end((error, response) => {
             expect(response.status).to.equal(401);
             done();
           });
       });
       it('should not return document(s) if token is invalid', (done) => {
-        request.get(`/api/search/documents/${term}`)
+        request.get(`/api/search/documents?term=${term}`)
           .set({ 'x-access-token': 'this-is-an-invalid-token' })
           .end((error, response) => {
             expect(response.status).to.equal(401);
             done();
           });
       });
+      it('should not return document(s) if search term is empty', (done) => {
+        request.get(`/api/search/documents?term=`)
+          .set({ 'x-access-token': adminUserToken })
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
+            expect(response.body.message).to.equal('Invalid Search Parameter!');
+            done();
+          });
+      });
       it('should return all matching document(s) if user is admin', (done) => {
-        request.get(`/api/search/documents/${term}`)
+        request.get(`/api/search/documents?term=${term}`)
           .set({ 'x-access-token': adminUserToken })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -108,7 +117,7 @@ describe('User API:', () => {
           });
       });
       it(`should return all owner's matching document(s) if user is not admin`, (done) => {
-        request.get(`/api/search/documents/${term}`)
+        request.get(`/api/search/documents?term=${term}`)
           .set({ 'x-access-token': regularUserToken })
           .end((error, response) => {
             expect(Array.isArray(response.body)).to.be.true;

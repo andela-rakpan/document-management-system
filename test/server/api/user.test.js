@@ -136,6 +136,14 @@ describe('User API:', () => {
             done();
           });
       });
+      it('should not return the user when supplied non-integer id', (done) => {
+        request.get('/api/users/id')
+          .set({ 'x-access-token': adminUserToken })
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
+            done();
+          });
+      });
       it('should not return the user when user is not current user', (done) => {
         request.get(`/api/users/${user.id}`)
           .set({ 'x-access-token': regularUserToken })
@@ -174,6 +182,16 @@ describe('User API:', () => {
             done();
           });
       });
+      it('should not edit user if non-integer id is supplied', (done) => {
+        const fieldsToUpdate = { title: 'the super admin' };
+        request.put('/api/users/id')
+          .set({ 'x-access-token': regularUserToken })
+          .send(fieldsToUpdate)
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
+            done();
+          });
+      });
       it('should not edit user if user is not current user', (done) => {
         const fieldsToUpdate = { firstname: 'John', lastname: 'Doe' };
         request.put(`/api/users/${user.id}`)
@@ -197,7 +215,10 @@ describe('User API:', () => {
           });
       });
       it('should perform edit when valid id is supplied and user is admin', (done) => {
-        const fieldsToUpdate = { firstname: 'Shalom', lastname: 'Ayidu' };
+        const fieldsToUpdate = { 
+          firstname: 'Shalom',
+          lastname: 'Ayidu',
+          password: 'IamShalom' };
         request.put(`/api/users/${user.id}`)
           .set({ 'x-access-token': adminUserToken })
           .send(fieldsToUpdate)
@@ -217,6 +238,14 @@ describe('User API:', () => {
           .set({ 'x-access-token': adminUserToken })
           .end((error, response) => {
             expect(response.status).to.equal(404);
+            done();
+          });
+      });
+      it('should not delete user if non-integer id is supplied', (done) => {
+        request.delete('/api/users/id')
+          .set({ 'x-access-token': adminUserToken })
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
             done();
           });
       });

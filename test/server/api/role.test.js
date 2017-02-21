@@ -147,6 +147,14 @@ describe('Role API:', () => {
             done();
           });
       });
+      it('should not return the role when supplied non-integer id', (done) => {
+        request.get('/api/roles/id')
+          .set({ 'x-access-token': adminUserToken })
+          .end((error, response) => {
+            expect(response.status).to.equal(404);
+            done();
+          });
+      });
       it('should not return the role when user is not admin', (done) => {
         request.get(`/api/roles/${role.id}`)
           .set({ 'x-access-token': regularUserToken })
@@ -174,6 +182,16 @@ describe('Role API:', () => {
           .send(fieldsToUpdate)
           .end((error, response) => {
             expect(response.status).to.equal(404);
+            done();
+          });
+      });
+      it('should not edit role if non-integer id is supplied', (done) => {
+        const fieldsToUpdate = { title: 'the super admin' };
+        request.put('/api/roles/id')
+          .set({ 'x-access-token': adminUserToken })
+          .send(fieldsToUpdate)
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
             done();
           });
       });
@@ -207,6 +225,14 @@ describe('Role API:', () => {
           .set({ 'x-access-token': adminUserToken })
           .end((error, response) => {
             expect(response.status).to.equal(404);
+            done();
+          });
+      });
+      it('should not delete role if non-integer id is supplied', (done) => {
+        request.delete('/api/roles/id')
+          .set({ 'x-access-token': adminUserToken })
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
             done();
           });
       });

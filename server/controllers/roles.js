@@ -23,10 +23,12 @@ const rolesController = {
    * @returns {Object} Response object
    */
   list(req, res) {
+    let query = {};
+    query.limit = Number(req.query.limit) !== 'NaN'? req.query.limit : 10;
+    query.offset = Number(req.query.limit) !== 'NaN'? req.query.offset : 0;
     db.Role
-      .all()
-      .then(roles => res.status(200).send(roles))
-      .catch(error => res.status(404).send(error));
+      .all(query)
+      .then(roles => res.status(200).send(roles));
   },
 
   /**
@@ -74,10 +76,9 @@ const rolesController = {
           .update(req.body, {
             fields: Object.keys(req.body)
           })
-          .then(updatedRole => res.status(200).send(updatedRole))
-          .catch(error => res.status(404).send(error));
+          .then(updatedRole => res.status(200).send(updatedRole));
       })
-      .catch(error => res.status(404).send(error));
+      .catch(error => res.status(400).send(error));
   },
 
   /**
@@ -100,8 +101,7 @@ const rolesController = {
           .destroy()
           .then(() => res.status(200).send({
             message: 'Role deleted successfully.',
-          }))
-          .catch(error => res.status(400).send(error));
+          }));
       })
       .catch(error => res.status(400).send(error));
   },

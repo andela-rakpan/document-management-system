@@ -28,18 +28,20 @@ const documentsController = {
    * @returns {Object} Response object
    */
   listAll(req, res) {
+    let query = {};
+    query.limit = Number(req.query.limit) !== 'NaN'? req.query.limit : 10;
+    query.offset = Number(req.query.limit) !== 'NaN'? req.query.offset : 0;
     if (Helpers.isAdmin(req)) {
       db.Document
-        .findAll()
-        .then(documents => res.status(200).send(documents))
-        .catch(error => res.status(400).send(error))
+        .findAll(query)
+        .then(documents => res.status(200).send(documents));
     } else {
+      query = {
+        where: {access: 'public'}
+      };
       db.Document
-        .findAll({
-          where: {access: 'public'}
-        })
-        .then(documents => res.status(200).send(documents))
-        .catch(error => res.status(400).send(error))
+        .findAll(query)
+        .then(documents => res.status(200).send(documents));
     }
   },
 
@@ -96,8 +98,7 @@ const documentsController = {
         
         document
           .update(req.body, { fields: Object.keys(req.body) })
-          .then(updatedDocument => res.status(200).send(updatedDocument))
-          .catch(error => res.status(400).send(error));
+          .then(updatedDocument => res.status(200).send(updatedDocument));
       })
       .catch(error => res.status(400).send(error));
   },
@@ -127,8 +128,7 @@ const documentsController = {
           .destroy()
           .then(() => res.status(200).send({
             message: 'Document deleted successfully.',
-          }))
-          .catch(error => res.status(400).send(error));
+          }));
       })
       .catch(error => res.status(400).send(error));
   },
@@ -140,8 +140,12 @@ const documentsController = {
    * @returns {Object} - Returns response object
    */
   searchPublic(req, res) {
-    const term = req.params.term;
+    const term = req.query.term;
 
+    if (term === '') { 
+      return res.status(400)
+            .send({ message: 'Invalid Search Parameter!' });
+    }
     let query = {
       where: {
         $and: [{
@@ -174,12 +178,14 @@ const documentsController = {
           }
         }
       }};
-    }
+    };
+
+    query.limit = Number(req.query.limit) !== 'NaN'? req.query.limit : 10;
+    query.offset = Number(req.query.limit) !== 'NaN'? req.query.offset : 0;
     query.order = '"createdAt" DESC';
     db.Document
       .findAll(query)
-      .then(documents => res.status(200).send(documents))
-      .catch(error => res.status(400).send(error));
+      .then(documents => res.status(200).send(documents));
   },
 
    /**
@@ -189,8 +195,12 @@ const documentsController = {
    * @returns {Object} - Returns response object
    */
   search(req, res) {
-    const term = req.params.term;
+    const term = req.query.term;
 
+    if (term === '') { 
+      return res.status(400)
+            .send({ message: 'Invalid Search Parameter!' });
+    }
     let query = {
       where: {
         $and: [{
@@ -220,12 +230,13 @@ const documentsController = {
           }
         }
       }};
-    }
+    };
+    query.limit = Number(req.query.limit) !== 'NaN'? req.query.limit : 10;
+    query.offset = Number(req.query.limit) !== 'NaN'? req.query.offset : 0;
     query.order = '"createdAt" DESC';
     db.Document
       .findAll(query)
-      .then(documents => res.status(200).send(documents))
-      .catch(error => res.status(400).send(error));
+      .then(documents => res.status(200).send(documents));
   },
 };
 

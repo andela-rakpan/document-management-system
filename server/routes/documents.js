@@ -14,11 +14,11 @@ const documentsRoute = (router) => {
     .delete(Authentication.verifyToken, documentsController.delete);
   
   // Search public documents
-  router.route('/search/documents/public/:term')
+  router.route('/search/documents/public')
     .get(Authentication.verifyToken, documentsController.searchPublic);
   
   // Search onwer documents
-  router.route('/search/documents/:term')
+  router.route('/search/documents')
     .get(Authentication.verifyToken, documentsController.search);
 };
 
