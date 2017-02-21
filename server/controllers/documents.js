@@ -29,17 +29,17 @@ const documentsController = {
    */
   listAll(req, res) {
     if (Helpers.isAdmin(req)) {
-      // Get all documents in the app
-      db.Document.findAll()
-        .then(documents => res.status(201).send(documents))
+      db.Document
+        .findAll()
+        .then(documents => res.status(200).send(documents))
         .catch(error => res.status(400).send(error))
     } else {
-      // Get all documents belonging to the current user
-      db.Document.findAll({
-        where: { ownerId: req.decoded.userId }
-      })
-      .then(documents => res.status(201).send(documents))
-      .catch(error => res.status(400).send(error))
+      db.Document
+        .findAll({
+          where: {access: 'public'}
+        })
+        .then(documents => res.status(200).send(documents))
+        .catch(error => res.status(400).send(error))
     }
   },
 
@@ -61,14 +61,14 @@ const documentsController = {
 
         if (Helpers.isAdmin(req)) {
           return res.status(200).send(document);
-        } else {
-          if (document.access === 'private'
-            && !isCurrentUser(req, document.ownerId)) {
-              return res.status(403)
-                .send({ message: 'This is a private document' });
-          }
-          res.send(document);
         }
+          
+        if (document.access === 'private' && !Helpers.isCurrentUser(req, document.ownerId)) {
+            return res.status(403)
+              .send({ message: 'This is a private document' });
+        }
+
+        res.send(document);
       })
       .catch(error => res.status(400).send(error));
   },
@@ -89,7 +89,7 @@ const documentsController = {
           });
         }
 
-        if (!isCurrentUser(req, document.ownerId)) {
+        if (!Helpers.isAdmin(req) && !Helpers.isCurrentUser(req, document.ownerId)) {
            return res.status(403)
             .send({ message: 'This document does not belong to you' });
         }
@@ -118,7 +118,7 @@ const documentsController = {
           });
         }
 
-        if (!isCurrentUser(req, document.ownerId)) {
+        if (!Helpers.isAdmin(req) && !Helpers.isCurrentUser(req, document.ownerId)) {
           return res.status(403)
             .send({ message: 'This document does not belong to you' });
         }
@@ -130,6 +130,101 @@ const documentsController = {
           }))
           .catch(error => res.status(400).send(error));
       })
+      .catch(error => res.status(400).send(error));
+  },
+
+  /**
+   * Gets all public documents relevant to search term
+   * @param {Object} req Request object
+   * @param {Object} res Response object
+   * @returns {Object} - Returns response object
+   */
+  searchPublic(req, res) {
+    const term = req.params.term;
+
+    let query = {
+      where: {
+        $and: [{
+          $or: {
+            title: {
+              $iLike: `%${term}%`
+            },
+            content: {
+              $iLike: `%${term}%`
+            }
+          }
+        }, {
+          $and: {
+            access: 'public',
+            ownerId: { $ne: req.decoded.userId } 
+          }
+        }
+        ]
+      }
+    };
+
+    if (Helpers.isAdmin(req)) {
+      query = { where: {
+        $or: {
+          title: {
+            $iLike: `%${term}%`
+          },
+          content: {
+            $iLike: `%${term}%`
+          }
+        }
+      }};
+    }
+    query.order = '"createdAt" DESC';
+    db.Document
+      .findAll(query)
+      .then(documents => res.status(200).send(documents))
+      .catch(error => res.status(400).send(error));
+  },
+
+   /**
+   * Gets all owner documents relevant to search term
+   * @param {Object} req Request object
+   * @param {Object} res Response object
+   * @returns {Object} - Returns response object
+   */
+  search(req, res) {
+    const term = req.params.term;
+
+    let query = {
+      where: {
+        $and: [{
+          $or: {
+            title: {
+              $iLike: `%${term}%`
+            },
+            content: {
+              $iLike: `%${term}%`
+            }
+          }
+        }, {
+          ownerId: req.decoded.userId,
+        }
+        ]
+      }
+    };
+
+    if (Helpers.isAdmin(req)) {
+      query = { where: {
+        $or: {
+          title: {
+            $iLike: `%${term}%`
+          },
+          content: {
+            $iLike: `%${term}%`
+          }
+        }
+      }};
+    }
+    query.order = '"createdAt" DESC';
+    db.Document
+      .findAll(query)
+      .then(documents => res.status(200).send(documents))
       .catch(error => res.status(400).send(error));
   },
 };
