@@ -29,6 +29,17 @@ const usersController = {
       });
   },
 
+   /**
+   * Logout a user
+   * @param {Object} req - Request object
+   * @param {Object} res - Response object
+   * @returns {Object} Response object
+   */
+  logout(req, res) {
+    res.status(200)
+      .send({ message: 'Successfully logged out!' });
+  },
+
  /**
    * Create a user
    * @param {Object} req - Request object

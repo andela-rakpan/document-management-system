@@ -54,6 +54,15 @@ describe('User API:', () => {
             done();
           });
       });
+      it('should not return document(s) if search term is empty', (done) => {
+        request.get(`/api/search/documents/public?term=`)
+          .set({ 'x-access-token': adminUserToken })
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
+            expect(response.body.message).to.equal('Invalid Search Parameter!');
+            done();
+          });
+      });
       it('should return all matching document(s) if user is admin', (done) => {
         request.get(`/api/search/documents/public?term=${term}`)
           .set({ 'x-access-token': adminUserToken })

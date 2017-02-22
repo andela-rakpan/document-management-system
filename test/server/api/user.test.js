@@ -59,6 +59,34 @@ describe('User API:', () => {
       });
     });
 
+    // POST requests - Logout User
+    describe('POST: (/api/users/logout) - ', () => {
+      it('should not logout a user if no token is provided', (done) => {
+        request.post('/api/users/logout')
+          .end((error, response) => {
+            expect(response.status).to.equal(401);
+            done();
+          });
+      });
+      it('should not logout a user if no token is provided', (done) => {
+        request.post('/api/users/logout')
+          .set({ 'x-access-token': 'this-is-an-invalid-token' })
+          .end((error, response) => {
+            expect(response.status).to.equal(401);
+            done();
+          });
+      });
+      it('should logout a user if valid token is provided', (done) => {
+        request.post('/api/users/logout')
+          .set({ 'x-access-token': regularUserToken })
+          .end((error, response) => {
+            expect(response.status).to.equal(200);
+            expect(response.body.message).to.equal('Successfully logged out!');
+            done();
+          });
+      });
+    });
+
     // POST requests - Create Users
     describe('POST: (/api/users) - ', () => {
       it('should not create a user when required fields are invalid', (done) => {
@@ -152,6 +180,21 @@ describe('User API:', () => {
             done();
           });
       });
+      it('should not return the user when No token is provided', (done) => {
+        request.get(`/api/users/${user.id}`)
+          .end((error, response) => {
+            expect(response.status).to.equal(401);
+            done();
+          });
+      });
+      it('should not return the user when Invalid Token is provided', (done) => {
+        request.get(`/api/users/${user.id}`)
+          .set({ 'x-access-token': 'this-is-an-invalid-token' })
+          .end((error, response) => {
+            expect(response.status).to.equal(401);
+            done();
+          });
+      });
       it('should return the user if valid id is provided and user is current user', (done) => {
         request.get(`/api/users/${user.id}`)
           .set({ 'x-access-token': user.token })
@@ -189,6 +232,25 @@ describe('User API:', () => {
           .send(fieldsToUpdate)
           .end((error, response) => {
             expect(response.status).to.equal(400);
+            done();
+          });
+      });
+      it('should not edit user if No token is provided', (done) => {
+        const fieldsToUpdate = { firstname: 'John', lastname: 'Doe' };
+        request.put(`/api/users/${user.id}`)
+          .send(fieldsToUpdate)
+          .end((error, response) => {
+            expect(response.status).to.equal(401);
+            done();
+          });
+      });
+      it('should not edit user if invalid token is provided', (done) => {
+        const fieldsToUpdate = { firstname: 'John', lastname: 'Doe' };
+        request.put(`/api/users/${user.id}`)
+          .set({ 'x-access-token': 'this-is-an-invalid-token' })
+          .send(fieldsToUpdate)
+          .end((error, response) => {
+            expect(response.status).to.equal(401);
             done();
           });
       });

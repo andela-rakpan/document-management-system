@@ -20,6 +20,10 @@ const usersRoute = (router) => {
   // Log in a user
   router.route('/users/login')
     .post(usersController.login);
+  
+  // Log out a user
+  router.route('/users/logout')
+    .post(Authentication.verifyToken, usersController.logout);
 
 };
 
