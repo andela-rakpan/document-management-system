@@ -33,6 +33,12 @@ app.use('/api', router);
 
 // app.use(require('webpack-hot-middleware')(compiler));
 
+app.get('*', (req, res) => {
+  res.status(200).send({
+    message: 'Welcome to the Document Management System API'
+  });
+});
+
 const server = http.createServer(app);
 server.listen(port, (err) => {
   console.log(`The server is running at localhost:${port}`);
