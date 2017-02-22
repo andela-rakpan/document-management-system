@@ -210,7 +210,8 @@ The following features make up the Document Management System API:
 - Send data with valid `term` query in the `URL`; for example, to search for personal documents that contain 'tia', send `/api/search/documents?term=tia`. 
 - An array of documents matching the search term is returned.   
 
-
+##### _POSTMAN Collection_
+[DMS-API](https://www.getpostman.com/collections/77dab144dabb35e1fa7b)
 
 ### **Author**
 > _**Raphael Ifiok Akpan**_ 
