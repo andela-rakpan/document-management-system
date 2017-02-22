@@ -19,12 +19,16 @@ const Authentication = {
   verifyToken(req, res, next) {
     const token = req.headers.authorization || req.headers['x-access-token'];
     if (!token) {
-      return res.status(401).send({ message: 'Authentication required to access this route!' });
+      return res.status(401).send({
+        message: 'Authentication required to access this route!'
+      });
     }
 
     jwt.verify(token, secret, (err, decoded) => {
       if (err) {
-        return res.status(401).send({ message: 'Authentication failed due to invalid token!' });
+        return res.status(401).send({
+          message: 'Authentication failed due to invalid token!'
+        });
       }
       req.decoded = decoded;
       next();
@@ -45,7 +49,9 @@ const Authentication = {
         if (role.title === 'admin') {
           next();
         } else {
-          return res.status(403).send({ message: 'Access Restricted; You are not an admin!' });
+          return res.status(403).send({
+            message: 'Access Restricted; You are not an admin!'
+          });
         }
       });
   }

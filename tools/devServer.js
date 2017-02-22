@@ -5,7 +5,6 @@ import logger from 'morgan';
 import webpack from 'webpack';
 import bodyParser from 'body-parser';
 import http from 'http';
-import path from 'path';
 import config from '../webpack.config.dev';
 import routes from '../server/routes';
 

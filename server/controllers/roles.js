@@ -23,9 +23,9 @@ const rolesController = {
    * @returns {Object} Response object
    */
   list(req, res) {
-    let query = {};
-    query.limit = Number(req.query.limit) !== 'NaN'? req.query.limit : 10;
-    query.offset = Number(req.query.limit) !== 'NaN'? req.query.offset : 0;
+    const query = {};
+    query.limit = Number(req.query.limit) !== 'NaN' ? req.query.limit : 10;
+    query.offset = Number(req.query.limit) !== 'NaN' ? req.query.offset : 0;
     db.Role
       .all(query)
       .then(roles => res.status(200).send(roles));

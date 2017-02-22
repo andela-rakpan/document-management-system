@@ -17,13 +17,12 @@ const usersController = {
   login(req, res) {
     db.User.findOne({ where: { email: req.body.email } })
       .then((user) => {
-        if (user) {
-          if (user.validatePassword(req.body.password)) {
-            const token = jwt.sign({ userId: user.id, roleId: user.roleId}, 
-            secret, { expiresIn: '1 day' });
-            return res.status(200).send({token, user});
-          }
+        if (user && user.validatePassword(req.body.password)) {
+          const token = jwt.sign({ userId: user.id, roleId: user.roleId },
+          secret, { expiresIn: '1 day' });
+          return res.status(200).send({ token, user });
         }
+
         res.status(401)
             .send({ message: 'Invalid Login Details!' });
       });
@@ -50,13 +49,9 @@ const usersController = {
     db.User.findOne({ where: { email: req.body.email } })
       .then((existingUser) => {
         if (existingUser) {
-          return res.status(400).send({ 
-            message: `Oops! A user already exists with this email: ${req.body.email}` 
+          return res.status(400).send({
+            message: 'Oops! A user already exists with this email'
           });
-        }
-
-        if (!req.body.roleId) {
-          req.body.roleId = 2;
         }
 
         db.User
@@ -65,15 +60,15 @@ const usersController = {
             lastname: req.body.lastname,
             email: req.body.email,
             password: req.body.password,
-            roleId: req.body.roleId,
+            roleId: 2,
           })
           .then((user) => {
-            const token = jwt.sign({ userId: user.id, roleId: user.roleId}, 
+            const token = jwt.sign({ userId: user.id, roleId: user.roleId },
             secret, { expiresIn: '1 day' });
-            res.status(201).send({token, user});
+            res.status(201).send({ token, user });
           })
           .catch(error => res.status(400).send(error));
-        });
+      });
   },
 
    /**
@@ -83,9 +78,9 @@ const usersController = {
    * @returns {Object} Response object
    */
   list(req, res) {
-    let query = {};
-    query.limit = Number(req.query.limit) !== 'NaN'? req.query.limit : 10;
-    query.offset = Number(req.query.limit) !== 'NaN'? req.query.offset : 0;
+    const query = {};
+    query.limit = Number(req.query.limit) !== 'NaN' ? req.query.limit : 10;
+    query.offset = Number(req.query.limit) !== 'NaN' ? req.query.offset : 0;
     db.User
       .findAll(query)
       .then(users => res.status(200).send(users));
@@ -140,8 +135,9 @@ const usersController = {
         if (Helpers.isAdmin(req) || Helpers.isCurrentUser(req, user.id)) {
           res.status(200).send(user);
         } else {
-          res.status(403)
-            .send({ message: 'You can only retrieve your documents!' });
+          res.status(403).send({
+            message: 'You are not authorized to access this document(s)'
+          });
         }
       })
       .catch(error => res.status(400).send(error));
@@ -174,7 +170,7 @@ const usersController = {
             .then(updatedUser => res.status(200).send(updatedUser));
         } else {
           res.status(403)
-            .send({ message: 'You can only update your details!' });
+            .send({ message: 'You are not authorized to update this user' });
         }
       })
       .catch(error => res.status(400).send(error));
@@ -195,7 +191,12 @@ const usersController = {
             message: 'User Not Found',
           });
         }
-        
+
+        if (Number(req.params.id) === 1) {
+          return res.status(403)
+            .send({ message: 'You cannot delete default admin user account!' });
+        }
+
         user
           .destroy()
           .then(() => res.status(200).send({

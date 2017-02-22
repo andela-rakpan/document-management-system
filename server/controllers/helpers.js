@@ -1,5 +1,3 @@
-import model from '../models';
-
 /**
  * controllers helper functions
  */
@@ -10,7 +8,7 @@ const Helpers = {
    * @param  {Object} req Request Object
    * @returns {Boolean} true or false
    */
-  isAdmin(req) {    
+  isAdmin(req) {
     return req.decoded.roleId === 1;
   },
 

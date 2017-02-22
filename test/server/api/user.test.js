@@ -1,11 +1,11 @@
+/* eslint-disable no-unused-expressions */
 import supertest from 'supertest';
 import chai from 'chai';
-import logger from 'fm-log';
-import app from '../../../tools/devServer';
-import model from '../../../server/models';
-import testHelper from '../testHelper';
 
-const expect = chai.expect; 
+import testHelper from '../testHelper';
+import app from '../../../tools/devServer';
+
+const expect = chai.expect;
 const request = supertest.agent(app);
 const adminUser = testHelper.testUser1;
 const regularUser = testHelper.testUser2;
@@ -18,8 +18,7 @@ describe('User API:', () => {
   let user = {};
 
   // Test users http requests
-  describe('Users REQUESTS:', ()=> {
-
+  describe('Users REQUESTS:', () => {
     // POST requests - Login User
     describe('POST: (/api/users/login) - ', () => {
       it('should not login a user if required fields are invalid', (done) => {
@@ -89,7 +88,8 @@ describe('User API:', () => {
 
     // POST requests - Create Users
     describe('POST: (/api/users) - ', () => {
-      it('should not create a user when required fields are invalid', (done) => {
+      it('should not create a user when required fields are invalid',
+      (done) => {
         request.post('/api/users')
           .send(invalidUser)
           .end((error, response) => {
@@ -187,7 +187,8 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should not return the user when Invalid Token is provided', (done) => {
+      it('should not return the user when Invalid Token is provided',
+      (done) => {
         request.get(`/api/users/${user.id}`)
           .set({ 'x-access-token': 'this-is-an-invalid-token' })
           .end((error, response) => {
@@ -195,7 +196,7 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should return the user if valid id is provided and user is current user', (done) => {
+      it('should return the user if user is current user', (done) => {
         request.get(`/api/users/${user.id}`)
           .set({ 'x-access-token': user.token })
           .end((error, response) => {
@@ -203,7 +204,8 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should return the user if valid id is provided and user admin', (done) => {
+      it('should return the user if valid id is provided and user admin',
+      (done) => {
         request.get(`/api/users/${user.id}`)
           .set({ 'x-access-token': adminUserToken })
           .end((error, response) => {
@@ -264,7 +266,7 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should perform edit when valid id is supplied and user is current user', (done) => {
+      it('should perform edit if user is current user', (done) => {
         const fieldsToUpdate = { firstname: 'John', lastname: 'Doe' };
         request.put(`/api/users/${user.id}`)
           .set({ 'x-access-token': user.token })
@@ -276,8 +278,9 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should perform edit when valid id is supplied and user is admin', (done) => {
-        const fieldsToUpdate = { 
+      it('should perform edit when valid id is supplied and user is admin',
+      (done) => {
+        const fieldsToUpdate = {
           firstname: 'Shalom',
           lastname: 'Ayidu',
           password: 'IamShalom' };
@@ -319,12 +322,24 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should delete user when valid id is supplied and user is admin', (done) => {
+      it('should not delete default admin user account', (done) => {
+        request.delete('/api/users/1')
+          .set({ 'x-access-token': adminUserToken })
+          .end((error, response) => {
+            expect(response.status).to.equal(403);
+            expect(response.body.message).to
+              .equal('You cannot delete default admin user account!');
+            done();
+          });
+      });
+      it('should delete user when valid id is supplied and user is admin',
+      (done) => {
         request.delete(`/api/users/${user.id}`)
           .set({ 'x-access-token': adminUserToken })
           .end((error, response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.message).to.equal('User deleted successfully.');
+            expect(response.body.message).to
+              .equal('User deleted successfully.');
             done();
           });
       });

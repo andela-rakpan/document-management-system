@@ -1,11 +1,12 @@
+/* eslint-disable no-unused-expressions */
+
 import supertest from 'supertest';
 import chai from 'chai';
-import logger from 'fm-log';
-import app from '../../../tools/devServer';
-import model from '../../../server/models';
-import testHelper from '../testHelper';
 
-const expect = chai.expect; 
+import testHelper from '../testHelper';
+import app from '../../../tools/devServer';
+
+const expect = chai.expect;
 const request = supertest.agent(app);
 
 const adminUser = testHelper.testUser1;
@@ -19,10 +20,10 @@ describe('User API:', () => {
   let regularUserToken;
   let document1 = {};
   let document2 = {};
-  let user = {};
+  const user = {};
 
   // Login users to access this endpoint
-   before((done) => {
+  before((done) => {
     request.post('/api/users/login')
       .send(adminUser)
       .end((error, response) => {
@@ -39,14 +40,16 @@ describe('User API:', () => {
   });
 
   // Test documents http requests
-  describe('Documents REQUESTS:', ()=> {
-
+  describe('Documents REQUESTS:', () => {
     // POST requests - Create Users
     describe('POST: (/api/documents) - ', () => {
-      it('should not create a document when required fields are invalid', (done) => {
+      it('should not create a document when required fields are invalid',
+      (done) => {
         request.post('/api/documents')
           .send(invalidDocument)
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(400);
             done();
@@ -62,16 +65,21 @@ describe('User API:', () => {
       });
       it('should not create a document if token is invalid', (done) => {
         request.post('/api/documents')
-          .set({ 'x-access-token': 'this-is-an-invalid-token' })
+          .set({
+            'x-access-token': 'this-is-an-invalid-token'
+          })
           .end((error, response) => {
             expect(response.status).to.equal(401);
             done();
           });
       });
-      it(`should create a 'private' document if document does not exists`, (done) => {
+      it('should create a \'private\' document if document does not exists',
+      (done) => {
         request.post('/api/documents')
           .send(privateDocument)
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             document1 = response.body;
             expect(document1.title).to.equal(privateDocument.title);
@@ -79,10 +87,13 @@ describe('User API:', () => {
             done();
           });
       });
-      it(`should create a 'public' document if document does not exists`, (done) => {
+      it('should create a \'public\' document if document does not exists',
+      (done) => {
         request.post('/api/documents')
           .send(publicDocument)
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             document2 = response.body;
             expect(document2.title).to.equal(publicDocument.title);
@@ -93,7 +104,9 @@ describe('User API:', () => {
       it('should not create a document if document already exists', (done) => {
         request.post('/api/documents')
           .send(privateDocument)
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(400);
             done();
@@ -101,7 +114,7 @@ describe('User API:', () => {
       });
     });
 
-   // GET requests - Retrieve all documents
+    // GET requests - Retrieve all documents
     describe('GET: (/api/documents) - ', () => {
       it('should not return documents if NO token is provided', (done) => {
         request.get('/api/documents')
@@ -112,15 +125,19 @@ describe('User API:', () => {
       });
       it('should not return documents if token is invalid', (done) => {
         request.get('/api/documents')
-          .set({ 'x-access-token': 'this-is-an-invalid-token' })
+          .set({
+            'x-access-token': 'this-is-an-invalid-token'
+          })
           .end((error, response) => {
             expect(response.status).to.equal(401);
             done();
           });
       });
-      it(`should return 'public' documents if token is valid and user is not admin`, (done) => {
+      it('should return \'public\' documents if user is not admin', (done) => {
         request.get('/api/documents')
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(200);
             expect(Array.isArray(response.body)).to.be.true;
@@ -129,9 +146,11 @@ describe('User API:', () => {
             done();
           });
       });
-      it(`should return all documents if token is valid and user is admin`, (done) => {
+      it('should return all documents if user is admin', (done) => {
         request.get('/api/documents')
-          .set({ 'x-access-token': adminUserToken })
+          .set({
+            'x-access-token': adminUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(200);
             expect(Array.isArray(response.body)).to.be.true;
@@ -145,15 +164,20 @@ describe('User API:', () => {
     describe('GET: (/api/documents/:id) - ', () => {
       it('should not return the document if supplied invalid id', (done) => {
         request.get('/api/documents/12345')
-          .set({ 'x-access-token': adminUserToken })
+          .set({
+            'x-access-token': adminUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(404);
             done();
           });
       });
-      it('should not return the document if supplied non-integer id', (done) => {
+      it('should not return the document if supplied non-integer id',
+      (done) => {
         request.get('/api/documents/id')
-          .set({ 'x-access-token': adminUserToken })
+          .set({
+            'x-access-token': adminUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(400);
             done();
@@ -168,24 +192,33 @@ describe('User API:', () => {
       });
       it('should not return document if token is invalid', (done) => {
         request.get(`/api/documents/${document1.id}`)
-          .set({ 'x-access-token': 'this-is-an-invalid-token' })
+          .set({
+            'x-access-token': 'this-is-an-invalid-token'
+          })
           .end((error, response) => {
             expect(response.status).to.equal(401);
             done();
           });
       });
-      it(`should not return document if document is 'private' and user is not owner/admin`, (done) => {
+      it('should not return document if document is \'private\' '
+      + 'and user is not owner/admin', (done) => {
         request.get(`/api/documents/${document1.id}`)
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(403);
-            expect(response.body.message).to.equal('This is a private document');
+            expect(response.body.message).to
+              .equal('This is a private document');
             done();
           });
       });
-      it('should return the document if valid id is provided and user is admin', (done) => {
+      it('should return document if valid id is provided and user is admin',
+      (done) => {
         request.get(`/api/documents/${document1.id}`)
-          .set({ 'x-access-token': adminUserToken })
+          .set({
+            'x-access-token': adminUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(200);
             done();
@@ -193,15 +226,20 @@ describe('User API:', () => {
       });
       it('should return the document if user is owner', (done) => {
         request.get('/api/documents/2')
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(200);
             done();
           });
       });
-      it(`should return document if document is 'public' and user is not admin/owner`, (done) => {
+      it(`should return document if document is 'public'
+      and user is not admin/owner`, (done) => {
         request.get(`/api/documents/${document2.id}`)
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(200);
             expect(response.body.access).to.equal('public');
@@ -212,49 +250,64 @@ describe('User API:', () => {
 
     // GET requests - Retrieve specific user's document
     describe('GET: (/api/users/:id/documents) - ', () => {
-      it(`should not return user's documents if supplied invalid id`, (done) => {
+      it('should not return user\'s documents if supplied invalid id',
+      (done) => {
         request.get('/api/users/12345/documents')
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(404);
             done();
           });
       });
-      it(`should not return user's documents if supplied non-integer id`, (done) => {
+      it('should not return user\'s documents if supplied non-integer id',
+      (done) => {
         request.get('/api/users/id/documents')
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(400);
             done();
           });
       });
-      it(`should not return user's documents if NO token is provided`, (done) => {
+      it('should not return user\'s documents if NO token is provided',
+      (done) => {
         request.get(`/api/users/${user.id}/documents`)
           .end((error, response) => {
             expect(response.status).to.equal(401);
             done();
           });
       });
-      it(`should not return user's documents if token is invalid`, (done) => {
+      it('should not return user\'s documents if token is invalid', (done) => {
         request.get(`/api/users/${user.id}/documents`)
-          .set({ 'x-access-token': 'this-is-an-invalid-token' })
+          .set({
+            'x-access-token': 'this-is-an-invalid-token'
+          })
           .end((error, response) => {
             expect(response.status).to.equal(401);
             done();
           });
       });
-      it(`should not return user's documents if user is not document owner`, (done) => {
-        request.get(`/api/users/3/documents`)
-          .set({ 'x-access-token': regularUserToken })
+      it('should not return user\'s documents if user is not document owner',
+      (done) => {
+        request.get('/api/users/3/documents')
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(403);
-            expect(response.body.message).to.equal('You can only retrieve your documents!');
+            expect(response.body.message).to
+              .equal('You are not authorized to access this document(s)');
             done();
           });
       });
-      it(`should return user's documents if valid id is provided and user is admin`, (done) => {
+      it('should return user\'s documents if user is admin', (done) => {
         request.get(`/api/users/${user.id}/documents`)
-          .set({ 'x-access-token': adminUserToken })
+          .set({
+            'x-access-token': adminUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(200);
             expect(Array.isArray(response.body.documents)).to.be.true;
@@ -262,9 +315,11 @@ describe('User API:', () => {
             done();
           });
       });
-      it(`should return user's documents if user is document owner`, (done) => {
+      it('should return user\'s documents if user is owner', (done) => {
         request.get(`/api/users/${user.id}/documents`)
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(200);
             expect(Array.isArray(response.body.documents)).to.be.true;
@@ -276,16 +331,19 @@ describe('User API:', () => {
 
     //  PUT Requests - Edit specific document
     describe('PUT: (/api/documents/:id) - ', () => {
-      const fieldsToUpdate = { 
-            title: 'Andela Bootcamp',
-            content: `It acclaimed to be one of the most regorous learning experiences
-                    one can go through. And that may not be far from the truth if you take 
-                    a closer look at Andela's acceptance ratio... `
+      const fieldsToUpdate = {
+        title: 'Andela Bootcamp',
+        content: 'It acclaimed to be one of the most regorous learning '
+          + 'experiences one can go through. And that may not be far '
+          + 'from the truth if you take a closer look at Andela\'s '
+          + 'acceptance ratio...'
       };
 
       it('should not edit document if invalid id is supplied', (done) => {
         request.put('/api/documents/12345')
-          .set({ 'x-access-token': adminUserToken })
+          .set({
+            'x-access-token': adminUserToken
+          })
           .send(fieldsToUpdate)
           .end((error, response) => {
             expect(response.status).to.equal(404);
@@ -294,7 +352,9 @@ describe('User API:', () => {
       });
       it('should not edit document if supplied non-integer id', (done) => {
         request.put('/api/documents/id')
-          .set({ 'x-access-token': adminUserToken })
+          .set({
+            'x-access-token': adminUserToken
+          })
           .send(fieldsToUpdate)
           .end((error, response) => {
             expect(response.status).to.equal(400);
@@ -310,7 +370,9 @@ describe('User API:', () => {
       });
       it('should not edit document if token is invalid', (done) => {
         request.put(`/api/documents/${document1.id}`)
-          .set({ 'x-access-token': 'this-is-an-invalid-token' })
+          .set({
+            'x-access-token': 'this-is-an-invalid-token'
+          })
           .end((error, response) => {
             expect(response.status).to.equal(401);
             done();
@@ -318,17 +380,23 @@ describe('User API:', () => {
       });
       it('should not edit document if user is not owner', (done) => {
         request.put(`/api/documents/${document1.id}`)
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .send(fieldsToUpdate)
           .end((error, response) => {
             expect(response.status).to.equal(403);
-            expect(response.body.message).to.equal('This document does not belong to you');
+            expect(response.body.message).to
+              .equal('You are not authorized to update this document');
             done();
           });
       });
-      it('should edit document if valid id is supplied and user is owner', (done) => {
+      it('should edit document if valid id is supplied and user is owner',
+      (done) => {
         request.put('/api/documents/2')
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .send(fieldsToUpdate)
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -337,10 +405,13 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should edit document if valid id is supplied and user is admin', (done) => {
+      it('should edit document if valid id is supplied and user is admin',
+      (done) => {
         fieldsToUpdate.title = 'The Andela Bootcamp Experience';
         request.put('/api/documents/2')
-          .set({ 'x-access-token': adminUserToken })
+          .set({
+            'x-access-token': adminUserToken
+          })
           .send(fieldsToUpdate)
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -361,7 +432,9 @@ describe('User API:', () => {
       });
       it('should not delete document if invalid id is supplied', (done) => {
         request.delete('/api/documents/12345')
-          .set({ 'x-access-token': adminUserToken })
+          .set({
+            'x-access-token': adminUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(404);
             done();
@@ -369,7 +442,9 @@ describe('User API:', () => {
       });
       it('should not delete document if supplied non-integer id', (done) => {
         request.delete('/api/documents/id')
-          .set({ 'x-access-token': adminUserToken })
+          .set({
+            'x-access-token': adminUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(400);
             done();
@@ -377,28 +452,39 @@ describe('User API:', () => {
       });
       it('should not delete document if user is not owner', (done) => {
         request.delete(`/api/documents/${document1.id}`)
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(403);
-            expect(response.body.message).to.equal('This document does not belong to you');
+            expect(response.body.message).to
+              .equal('You are not authorized to delete this document');
             done();
           });
       });
-      it('should delete document if valid id is supplied and user is owner', (done) => {
+      it('should delete document if valid id is supplied and user is owner',
+      (done) => {
         request.delete('/api/documents/2')
-          .set({ 'x-access-token': regularUserToken })
+          .set({
+            'x-access-token': regularUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.message).to.equal('Document deleted successfully.');
+            expect(response.body.message).to
+              .equal('Document deleted successfully.');
             done();
           });
       });
-      it('should delete document if valid id is supplied and user is admin', (done) => {
+      it('should delete document if valid id is supplied and user is admin',
+      (done) => {
         request.delete(`/api/documents/${document2.id}`)
-          .set({ 'x-access-token': adminUserToken })
+          .set({
+            'x-access-token': adminUserToken
+          })
           .end((error, response) => {
             expect(response.status).to.equal(200);
-            expect(response.body.message).to.equal('Document deleted successfully.');
+            expect(response.body.message).to
+              .equal('Document deleted successfully.');
             done();
           });
       });
