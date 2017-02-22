@@ -5,7 +5,6 @@ import logger from 'morgan';
 import webpack from 'webpack';
 import bodyParser from 'body-parser';
 import http from 'http';
-import path from 'path';
 import config from '../webpack.config.dev';
 import routes from '../server/routes';
 
@@ -33,6 +32,12 @@ app.use('/api', router);
 // }));
 
 // app.use(require('webpack-hot-middleware')(compiler));
+
+app.get('*', (req, res) => {
+  res.status(200).send({
+    message: 'Welcome to the Document Management System API'
+  });
+});
 
 const server = http.createServer(app);
 server.listen(port, (err) => {

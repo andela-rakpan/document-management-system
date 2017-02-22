@@ -29,15 +29,15 @@ const documentsController = {
    */
   listAll(req, res) {
     let query = {};
-    query.limit = Number(req.query.limit) !== 'NaN'? req.query.limit : 10;
-    query.offset = Number(req.query.limit) !== 'NaN'? req.query.offset : 0;
+    query.limit = Number(req.query.limit) !== 'NaN' ? req.query.limit : 10;
+    query.offset = Number(req.query.limit) !== 'NaN' ? req.query.offset : 0;
     if (Helpers.isAdmin(req)) {
       db.Document
         .findAll(query)
         .then(documents => res.status(200).send(documents));
     } else {
       query = {
-        where: {access: 'public'}
+        where: { access: 'public' }
       };
       db.Document
         .findAll(query)
@@ -64,10 +64,11 @@ const documentsController = {
         if (Helpers.isAdmin(req)) {
           return res.status(200).send(document);
         }
-          
-        if (document.access === 'private' && !Helpers.isCurrentUser(req, document.ownerId)) {
-            return res.status(403)
-              .send({ message: 'This is a private document' });
+
+        if (document.access === 'private' &&
+          !Helpers.isCurrentUser(req, document.ownerId)) {
+          return res.status(403)
+            .send({ message: 'This is a private document' });
         }
 
         res.send(document);
@@ -91,11 +92,13 @@ const documentsController = {
           });
         }
 
-        if (!Helpers.isAdmin(req) && !Helpers.isCurrentUser(req, document.ownerId)) {
-           return res.status(403)
-            .send({ message: 'This document does not belong to you' });
+        if (!Helpers.isAdmin(req) &&
+          !Helpers.isCurrentUser(req, document.ownerId)) {
+          return res.status(403).send({
+            message: 'You are not authorized to update this document'
+          });
         }
-        
+
         document
           .update(req.body, { fields: Object.keys(req.body) })
           .then(updatedDocument => res.status(200).send(updatedDocument));
@@ -119,9 +122,11 @@ const documentsController = {
           });
         }
 
-        if (!Helpers.isAdmin(req) && !Helpers.isCurrentUser(req, document.ownerId)) {
-          return res.status(403)
-            .send({ message: 'This document does not belong to you' });
+        if (!Helpers.isAdmin(req) &&
+          !Helpers.isCurrentUser(req, document.ownerId)) {
+          return res.status(403).send({
+            message: 'You are not authorized to delete this document'
+          });
         }
 
         document
@@ -142,9 +147,10 @@ const documentsController = {
   searchPublic(req, res) {
     const term = req.query.term;
 
-    if (term === '') { 
-      return res.status(400)
-            .send({ message: 'Invalid Search Parameter!' });
+    if (term === '') {
+      return res.status(400).send({
+        message: 'Invalid Search Parameter!'
+      });
     }
     let query = {
       where: {
@@ -160,7 +166,7 @@ const documentsController = {
         }, {
           $and: {
             access: 'public',
-            ownerId: { $ne: req.decoded.userId } 
+            ownerId: { $ne: req.decoded.userId }
           }
         }
         ]
@@ -168,20 +174,22 @@ const documentsController = {
     };
 
     if (Helpers.isAdmin(req)) {
-      query = { where: {
-        $or: {
-          title: {
-            $iLike: `%${term}%`
-          },
-          content: {
-            $iLike: `%${term}%`
+      query = {
+        where: {
+          $or: {
+            title: {
+              $iLike: `%${term}%`
+            },
+            content: {
+              $iLike: `%${term}%`
+            }
           }
         }
-      }};
-    };
+      };
+    }
 
-    query.limit = Number(req.query.limit) !== 'NaN'? req.query.limit : 10;
-    query.offset = Number(req.query.limit) !== 'NaN'? req.query.offset : 0;
+    query.limit = Number(req.query.limit) !== 'NaN' ? req.query.limit : 10;
+    query.offset = Number(req.query.limit) !== 'NaN' ? req.query.offset : 0;
     query.order = '"createdAt" DESC';
     db.Document
       .findAll(query)
@@ -197,9 +205,9 @@ const documentsController = {
   search(req, res) {
     const term = req.query.term;
 
-    if (term === '') { 
+    if (term === '') {
       return res.status(400)
-            .send({ message: 'Invalid Search Parameter!' });
+        .send({ message: 'Invalid Search Parameter!' });
     }
     let query = {
       where: {
@@ -220,19 +228,21 @@ const documentsController = {
     };
 
     if (Helpers.isAdmin(req)) {
-      query = { where: {
-        $or: {
-          title: {
-            $iLike: `%${term}%`
-          },
-          content: {
-            $iLike: `%${term}%`
+      query = {
+        where: {
+          $or: {
+            title: {
+              $iLike: `%${term}%`
+            },
+            content: {
+              $iLike: `%${term}%`
+            }
           }
         }
-      }};
-    };
-    query.limit = Number(req.query.limit) !== 'NaN'? req.query.limit : 10;
-    query.offset = Number(req.query.limit) !== 'NaN'? req.query.offset : 0;
+      };
+    }
+    query.limit = Number(req.query.limit) !== 'NaN' ? req.query.limit : 10;
+    query.offset = Number(req.query.limit) !== 'NaN' ? req.query.offset : 0;
     query.order = '"createdAt" DESC';
     db.Document
       .findAll(query)

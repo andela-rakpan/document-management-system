@@ -21,6 +21,9 @@ const usersRoute = (router) => {
   router.route('/users/login')
     .post(usersController.login);
 
+  // Log out a user
+  router.route('/users/logout')
+    .post(Authentication.verifyToken, usersController.logout);
 };
 
 export default usersRoute;

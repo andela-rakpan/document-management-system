@@ -48,7 +48,7 @@ const testHelper = {
     roleId: 2
   },
 
- testUser4: {
+  testUser4: {
     firstname: faker.name.firstName(),
     lastname: faker.name.lastName(),
     email: faker.internet.email(),
@@ -58,8 +58,8 @@ const testHelper = {
 
   testDocument1: {
     title: 'About Andela',
-    content: 'Andela extends engineering teams with world-class software' 
-      + ' developers. We recruit the most talented developers on the ' 
+    content: 'Andela extends engineering teams with world-class software'
+      + ' developers. We recruit the most talented developers on the '
       + 'African continent, shape them into technical leaders, and place '
       + 'them as full-time distributed team members with companies that '
       + 'range from Microsoft and IBM to dozens of high-growth startups',
@@ -85,7 +85,7 @@ const testHelper = {
 
   testDocument3: {
     title: 'Autocannibalism',
-    content: 'Many species across the animal kingdom are cannibals, eating' 
+    content: 'Many species across the animal kingdom are cannibals, eating'
     + 'members of their own species for sustenance or dominance. But there '
     + 'is one behaviour that is even more extreme than simple cannibalism. '
     + 'Some animals will, on occasion, eat parts of their own bodies. '

@@ -1,6 +1,6 @@
-import faker from 'faker';
 import bcrypt from 'bcrypt-nodejs';
 import logger from 'fm-log';
+
 import model from '../../server/models';
 import testHelper from './testHelper';
 
@@ -18,7 +18,9 @@ class SeedHelper {
    * @return {Void} - Returns Void
    */
   static init() {
-    model.sequelize.sync({ force: true })
+    model.sequelize.sync({
+      force: true
+    })
       .then(() => {
         SeedHelper.populateRoleTable()
           .then(() => {
@@ -59,6 +61,7 @@ class SeedHelper {
 
   /**
    * Define bycript to hash password
+   * @param {String} password - User password
    * @returns {String} - Hashed password
    */
   static hashPass(password) {
@@ -92,12 +95,12 @@ class SeedHelper {
    */
   static populateDocumentTable() {
     const documents = [
-        testHelper.testDocument1,
-        testHelper.testDocument2,
-        testHelper.testDocument3,
-        testHelper.testDocument6,
-        testHelper.testDocument7
-      ];
+      testHelper.testDocument1,
+      testHelper.testDocument2,
+      testHelper.testDocument3,
+      testHelper.testDocument6,
+      testHelper.testDocument7
+    ];
     return model.Document.bulkCreate(documents);
   }
 }

@@ -211,6 +211,8 @@ The following features make up the Document Management System API:
 - An array of documents matching the search term is returned.   
 
 
+#### _POSTMAN Collection_
+[DMS-API](https://www.getpostman.com/collections/77dab144dabb35e1fa7b)
 
 ### **Author**
 > _**Raphael Ifiok Akpan**_ 
