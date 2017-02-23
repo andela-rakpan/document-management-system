@@ -13,7 +13,7 @@ Document Management System is an API that manages documents with users, document
 The following features make up the Document Management System API:
 
 ##### Authentication
-- It uses Jason Web Token (JWT) for authentication.  
+- It uses JSON Web Token (JWT) for authentication.  
 - It generates a token upon successul login / account creation and returns it to the client.   
 - It verifies the token to ensures a user is authenticated to access some endpoints.
 
@@ -213,6 +213,9 @@ The following features make up the Document Management System API:
 
 #### _POSTMAN Collection_
 [DMS-API](https://www.getpostman.com/collections/77dab144dabb35e1fa7b)
+
+#### _HOSTED at Heroku_
+[https://document-mgt-system.herokuapp.com/](https://document-mgt-system.herokuapp.com)
 
 ### **Author**
 > _**Raphael Ifiok Akpan**_ 
