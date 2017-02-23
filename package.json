@@ -4,13 +4,14 @@
   "description": "A full stack document management system, complete with roles and privileges. Each document defines access rights; the document defines which roles can access it. Also, each document specifies the date it was published.",
   "main": "index.js",
   "scripts": {
+    "build": "rimraf dist/ && babel ./ --copy-files -d dist --presets es2015,stage-2  --ignore ./node_modules,client,coverage",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "db:migrate": "sequelize db:migrate",
     "seed:test": "NODE_ENV=test babel-node test/server/seedHelper.js",
-    "seed:db": "babel-node test/server/seedHelper.js",
-    "start": "npm-run-all seed:db start:server",
-    "start:server": "babel-node tools/devServer.js",
-    "start:nodemon": "nodemon tools/devServer.js --exec babel-node --presets es2015,stage-2",
+    "seed:db": "node dist/test/server/seedHelper.js",
+    "start": "npm-run-all build seed:db start:server",
+    "start:server": "node dist/lib/devServer.js",
+    "start:nodemon": "nodemon lib/devServer.js --exec babel-node --presets es2015,stage-2",
     "test:server": "NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover ./node_modules/.bin/_mocha test/server/**/*.test.js",
     "test": "npm-run-all seed:test test:server"
   },
