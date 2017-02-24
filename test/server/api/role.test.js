@@ -50,17 +50,7 @@ describe('Role API:', () => {
             done();
           });
       });
-      it('should not create a role if no token is provided', (done) => {
-        const newRole = {
-          title: 'super admin'
-        };
-        request.post('/api/roles')
-          .send(newRole)
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
+
       it('should not create a role if user is not admin', (done) => {
         const newRole = {
           title: 'super admin'
@@ -75,20 +65,7 @@ describe('Role API:', () => {
             done();
           });
       });
-      it('should not create a role if token is invalid', (done) => {
-        const newRole = {
-          title: 'super admin'
-        };
-        request.post('/api/roles')
-          .set({
-            'x-access-token': 'this-is-an-invalid-token'
-          })
-          .send(newRole)
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
+
       it('should create a role if required field is valid and user is admin',
       (done) => {
         const newRole = {
@@ -107,6 +84,7 @@ describe('Role API:', () => {
             done();
           });
       });
+
       it('should not create a role if role already exists', (done) => {
         const newRole = {
           title: 'super admin'
@@ -125,23 +103,6 @@ describe('Role API:', () => {
 
     // GET requests - Retrieve all ROLES
     describe('GET: (/api/roles)', () => {
-      it('should not return roles if NO token is provided', (done) => {
-        request.get('/api/roles')
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
-      it('should not return roles if token is invalid', (done) => {
-        request.get('/api/roles')
-          .set({
-            'x-access-token': 'this-is-an-invalid-token'
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
       it('should not return roles if user is not admin', (done) => {
         request.get('/api/roles')
           .set({
@@ -152,6 +113,7 @@ describe('Role API:', () => {
             done();
           });
       });
+
       it('should return roles if token is valid and user is admin', (done) => {
         request.get('/api/roles')
           .set({
@@ -178,6 +140,7 @@ describe('Role API:', () => {
             done();
           });
       });
+
       it('should not return the role when supplied non-integer id', (done) => {
         request.get('/api/roles/id')
           .set({
@@ -188,6 +151,7 @@ describe('Role API:', () => {
             done();
           });
       });
+
       it('should not return the role when user is not admin', (done) => {
         request.get(`/api/roles/${role.id}`)
           .set({
@@ -198,6 +162,7 @@ describe('Role API:', () => {
             done();
           });
       });
+
       it('should return the role when valid id is provided and user is admin',
       (done) => {
         request.get(`/api/roles/${role.id}`)
@@ -227,6 +192,7 @@ describe('Role API:', () => {
             done();
           });
       });
+
       it('should not edit role if non-integer id is supplied', (done) => {
         const fieldsToUpdate = {
           title: 'the super admin'
@@ -241,20 +207,7 @@ describe('Role API:', () => {
             done();
           });
       });
-      it('should not edit role if user is not admin', (done) => {
-        const fieldsToUpdate = {
-          title: 'the super admin'
-        };
-        request.put(`/api/roles/${role.id}`)
-          .set({
-            'x-access-token': regularUserToken
-          })
-          .send(fieldsToUpdate)
-          .end((error, response) => {
-            expect(response.status).to.equal(403);
-            done();
-          });
-      });
+
       it('should perform edit when valid id is supplied and user is admin',
       (done) => {
         const fieldsToUpdate = {
@@ -285,6 +238,7 @@ describe('Role API:', () => {
             done();
           });
       });
+
       it('should not delete role if non-integer id is supplied', (done) => {
         request.delete('/api/roles/id')
           .set({
@@ -295,16 +249,7 @@ describe('Role API:', () => {
             done();
           });
       });
-      it('should not delete role if user is not admin', (done) => {
-        request.delete(`/api/roles/${role.id}`)
-          .set({
-            'x-access-token': regularUserToken
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(403);
-            done();
-          });
-      });
+
       it('should delete role when valid id is supplied', (done) => {
         request.delete(`/api/roles/${role.id}`)
           .set({

@@ -55,24 +55,7 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should not create a document if no token is provided', (done) => {
-        request.post('/api/documents')
-          .send(privateDocument)
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
-      it('should not create a document if token is invalid', (done) => {
-        request.post('/api/documents')
-          .set({
-            'x-access-token': 'this-is-an-invalid-token'
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
+
       it('should create a \'private\' document if document does not exists',
       (done) => {
         request.post('/api/documents')
@@ -87,6 +70,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should create a \'public\' document if document does not exists',
       (done) => {
         request.post('/api/documents')
@@ -101,6 +85,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should not create a document if document already exists', (done) => {
         request.post('/api/documents')
           .send(privateDocument)
@@ -116,23 +101,6 @@ describe('User API:', () => {
 
     // GET requests - Retrieve all documents
     describe('GET: (/api/documents) - ', () => {
-      it('should not return documents if NO token is provided', (done) => {
-        request.get('/api/documents')
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
-      it('should not return documents if token is invalid', (done) => {
-        request.get('/api/documents')
-          .set({
-            'x-access-token': 'this-is-an-invalid-token'
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
       it('should return \'public\' documents if user is not admin', (done) => {
         request.get('/api/documents')
           .set({
@@ -146,6 +114,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should return all documents if user is admin', (done) => {
         request.get('/api/documents')
           .set({
@@ -172,6 +141,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should not return the document if supplied non-integer id',
       (done) => {
         request.get('/api/documents/id')
@@ -183,23 +153,7 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should not return document if NO token is provided', (done) => {
-        request.get(`/api/documents/${document1.id}`)
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
-      it('should not return document if token is invalid', (done) => {
-        request.get(`/api/documents/${document1.id}`)
-          .set({
-            'x-access-token': 'this-is-an-invalid-token'
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
+
       it('should not return document if document is \'private\' '
       + 'and user is not owner/admin', (done) => {
         request.get(`/api/documents/${document1.id}`)
@@ -213,6 +167,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should return document if valid id is provided and user is admin',
       (done) => {
         request.get(`/api/documents/${document1.id}`)
@@ -224,6 +179,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should return the document if user is owner', (done) => {
         request.get('/api/documents/2')
           .set({
@@ -234,6 +190,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it(`should return document if document is 'public'
       and user is not admin/owner`, (done) => {
         request.get(`/api/documents/${document2.id}`)
@@ -261,6 +218,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should not return user\'s documents if supplied non-integer id',
       (done) => {
         request.get('/api/users/id/documents')
@@ -272,24 +230,7 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should not return user\'s documents if NO token is provided',
-      (done) => {
-        request.get(`/api/users/${user.id}/documents`)
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
-      it('should not return user\'s documents if token is invalid', (done) => {
-        request.get(`/api/users/${user.id}/documents`)
-          .set({
-            'x-access-token': 'this-is-an-invalid-token'
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
+
       it('should not return user\'s documents if user is not document owner',
       (done) => {
         request.get('/api/users/3/documents')
@@ -303,6 +244,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should return user\'s documents if user is admin', (done) => {
         request.get(`/api/users/${user.id}/documents`)
           .set({
@@ -315,6 +257,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should return user\'s documents if user is owner', (done) => {
         request.get(`/api/users/${user.id}/documents`)
           .set({
@@ -350,6 +293,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should not edit document if supplied non-integer id', (done) => {
         request.put('/api/documents/id')
           .set({
@@ -361,23 +305,7 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should not edit document if NO token is provided', (done) => {
-        request.put(`/api/documents/${document1.id}`)
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
-      it('should not edit document if token is invalid', (done) => {
-        request.put(`/api/documents/${document1.id}`)
-          .set({
-            'x-access-token': 'this-is-an-invalid-token'
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
+
       it('should not edit document if user is not owner', (done) => {
         request.put(`/api/documents/${document1.id}`)
           .set({
@@ -390,6 +318,7 @@ describe('User API:', () => {
               .equal('You are not authorized to update this document');
             done();
           });
+
       });
       it('should edit document if valid id is supplied and user is owner',
       (done) => {
@@ -405,6 +334,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should edit document if valid id is supplied and user is admin',
       (done) => {
         fieldsToUpdate.title = 'The Andela Bootcamp Experience';
@@ -423,13 +353,6 @@ describe('User API:', () => {
 
     // DELETE Requests - Delete specific document
     describe('DELETE: (/api/documents/:id) - ', () => {
-      it('should not delete document if NO token is provided', (done) => {
-        request.delete(`/api/documents/${document1.id}`)
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
       it('should not delete document if invalid id is supplied', (done) => {
         request.delete('/api/documents/12345')
           .set({
@@ -440,6 +363,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should not delete document if supplied non-integer id', (done) => {
         request.delete('/api/documents/id')
           .set({
@@ -450,6 +374,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should not delete document if user is not owner', (done) => {
         request.delete(`/api/documents/${document1.id}`)
           .set({
@@ -462,6 +387,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should delete document if valid id is supplied and user is owner',
       (done) => {
         request.delete('/api/documents/2')
@@ -475,6 +401,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should delete document if valid id is supplied and user is admin',
       (done) => {
         request.delete(`/api/documents/${document2.id}`)

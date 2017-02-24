@@ -50,31 +50,7 @@ describe('Type API:', () => {
             done();
           });
       });
-      it('should not create a type if no token is provided', (done) => {
-        const newType = {
-          title: 'letter'
-        };
-        request.post('/api/types')
-          .send(newType)
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
-      it('should not create a type if token is invalid', (done) => {
-        const newType = {
-          title: 'letter'
-        };
-        request.post('/api/types')
-          .set({
-            'x-access-token': 'this-is-an-invalid-token'
-          })
-          .send(newType)
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
+
       it('should create a type if required field is valid', (done) => {
         const newType = {
           title: 'letter'
@@ -92,6 +68,7 @@ describe('Type API:', () => {
             done();
           });
       });
+
       it('should not create a type if type already exists', (done) => {
         const newType = {
           title: 'letter'
@@ -110,23 +87,6 @@ describe('Type API:', () => {
 
     // GET requests - Retrieve all Types
     describe('GET: (/api/types)', () => {
-      it('should not return types if NO token is provided', (done) => {
-        request.get('/api/types')
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
-      it('should not return types if token is invalid', (done) => {
-        request.get('/api/types')
-          .set({
-            'x-access-token': 'this-is-an-invalid-token'
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
       it('should return types if token is valid', (done) => {
         request.get('/api/types')
           .set({
@@ -153,6 +113,7 @@ describe('Type API:', () => {
             done();
           });
       });
+
       it('should not return the type if supplied non-integer id', (done) => {
         request.get('/api/types/id')
           .set({
@@ -163,16 +124,7 @@ describe('Type API:', () => {
             done();
           });
       });
-      it('should not return the type if supplied token is invalid', (done) => {
-        request.get(`/api/types/${type.id}`)
-          .set({
-            'x-access-token': 'this-is-an-invalid-token'
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
+
       it('should return the type if valid id is provided and user logged in',
       (done) => {
         request.get(`/api/types/${type.id}`)
@@ -202,6 +154,7 @@ describe('Type API:', () => {
             done();
           });
       });
+
       it('should not edit type if non-integer id is supplied', (done) => {
         const fieldsToUpdate = {
           title: 'official'
@@ -216,20 +169,7 @@ describe('Type API:', () => {
             done();
           });
       });
-      it('should not edit type if user is not admin', (done) => {
-        const fieldsToUpdate = {
-          title: 'official'
-        };
-        request.put(`/api/types/${type.id}`)
-          .set({
-            'x-access-token': regularUserToken
-          })
-          .send(fieldsToUpdate)
-          .end((error, response) => {
-            expect(response.status).to.equal(403);
-            done();
-          });
-      });
+
       it('should perform edit when valid id is supplied and user is admin',
       (done) => {
         const fieldsToUpdate = {
@@ -260,6 +200,7 @@ describe('Type API:', () => {
             done();
           });
       });
+
       it('should not delete type if non-integer id is supplied', (done) => {
         request.delete('/api/types/id')
           .set({
@@ -270,16 +211,7 @@ describe('Type API:', () => {
             done();
           });
       });
-      it('should not delete type if user is not admin', (done) => {
-        request.delete(`/api/types/${type.id}`)
-          .set({
-            'x-access-token': regularUserToken
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(403);
-            done();
-          });
-      });
+
       it('should delete type when valid id is supplied', (done) => {
         request.delete(`/api/types/${type.id}`)
           .set({

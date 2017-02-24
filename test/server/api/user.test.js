@@ -33,6 +33,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should not login a user if user details does not exist', (done) => {
         request.post('/api/users/login')
           .send(regularUser2)
@@ -41,6 +42,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should login a user if user details exists', (done) => {
         request.post('/api/users/login')
           .send(adminUser)
@@ -60,21 +62,6 @@ describe('User API:', () => {
 
     // POST requests - Logout User
     describe('POST: (/api/users/logout) - ', () => {
-      it('should not logout a user if no token is provided', (done) => {
-        request.post('/api/users/logout')
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
-      it('should not logout a user if no token is provided', (done) => {
-        request.post('/api/users/logout')
-          .set({ 'x-access-token': 'this-is-an-invalid-token' })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
       it('should logout a user if valid token is provided', (done) => {
         request.post('/api/users/logout')
           .set({ 'x-access-token': regularUserToken })
@@ -97,6 +84,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should create a user if user does not exists', (done) => {
         request.post('/api/users')
           .send(regularUser2)
@@ -107,6 +95,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should not create a user if user already exists', (done) => {
         request.post('/api/users')
           .send(regularUser2)
@@ -119,29 +108,6 @@ describe('User API:', () => {
 
     // GET requests - Retrieve all Users
     describe('GET: (/api/users) - ', () => {
-      it('should not return users if NO token is provided', (done) => {
-        request.get('/api/users')
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
-      it('should not return users if token is invalid', (done) => {
-        request.get('/api/users')
-          .set({ 'x-access-token': 'this-is-an-invalid-token' })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
-      it('should not return users if user is not admin', (done) => {
-        request.get('/api/users')
-          .set({ 'x-access-token': regularUserToken })
-          .end((error, response) => {
-            expect(response.status).to.equal(403);
-            done();
-          });
-      });
       it('should return users if token is valid and user is admin', (done) => {
         request.get('/api/users')
           .set({ 'x-access-token': adminUserToken })
@@ -164,6 +130,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should not return the user when supplied non-integer id', (done) => {
         request.get('/api/users/id')
           .set({ 'x-access-token': adminUserToken })
@@ -172,6 +139,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should not return the user when user is not current user', (done) => {
         request.get(`/api/users/${user.id}`)
           .set({ 'x-access-token': regularUserToken })
@@ -180,22 +148,7 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should not return the user when No token is provided', (done) => {
-        request.get(`/api/users/${user.id}`)
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
-      it('should not return the user when Invalid Token is provided',
-      (done) => {
-        request.get(`/api/users/${user.id}`)
-          .set({ 'x-access-token': 'this-is-an-invalid-token' })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
+
       it('should return the user if user is current user', (done) => {
         request.get(`/api/users/${user.id}`)
           .set({ 'x-access-token': user.token })
@@ -204,7 +157,8 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should return the user if valid id is provided and user admin',
+
+      it('should return the user if valid id is provided and user is admin',
       (done) => {
         request.get(`/api/users/${user.id}`)
           .set({ 'x-access-token': adminUserToken })
@@ -227,6 +181,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should not edit user if non-integer id is supplied', (done) => {
         const fieldsToUpdate = { title: 'the super admin' };
         request.put('/api/users/id')
@@ -237,25 +192,7 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should not edit user if No token is provided', (done) => {
-        const fieldsToUpdate = { firstname: 'John', lastname: 'Doe' };
-        request.put(`/api/users/${user.id}`)
-          .send(fieldsToUpdate)
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
-      it('should not edit user if invalid token is provided', (done) => {
-        const fieldsToUpdate = { firstname: 'John', lastname: 'Doe' };
-        request.put(`/api/users/${user.id}`)
-          .set({ 'x-access-token': 'this-is-an-invalid-token' })
-          .send(fieldsToUpdate)
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-      });
+
       it('should not edit user if user is not current user', (done) => {
         const fieldsToUpdate = { firstname: 'John', lastname: 'Doe' };
         request.put(`/api/users/${user.id}`)
@@ -266,6 +203,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should perform edit if user is current user', (done) => {
         const fieldsToUpdate = { firstname: 'John', lastname: 'Doe' };
         request.put(`/api/users/${user.id}`)
@@ -278,6 +216,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should perform edit when valid id is supplied and user is admin',
       (done) => {
         const fieldsToUpdate = {
@@ -306,6 +245,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should not delete user if non-integer id is supplied', (done) => {
         request.delete('/api/users/id')
           .set({ 'x-access-token': adminUserToken })
@@ -314,14 +254,7 @@ describe('User API:', () => {
             done();
           });
       });
-      it('should not delete user if user is not admin', (done) => {
-        request.delete(`/api/users/${user.id}`)
-          .set({ 'x-access-token': user.token })
-          .end((error, response) => {
-            expect(response.status).to.equal(403);
-            done();
-          });
-      });
+
       it('should not delete default admin user account', (done) => {
         request.delete('/api/users/1')
           .set({ 'x-access-token': adminUserToken })
@@ -332,6 +265,7 @@ describe('User API:', () => {
             done();
           });
       });
+
       it('should delete user when valid id is supplied and user is admin',
       (done) => {
         request.delete(`/api/users/${user.id}`)
