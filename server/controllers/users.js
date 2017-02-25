@@ -14,12 +14,18 @@ const usersController = {
    * @returns {Object} Response object
    */
   login(req, res) {
-    db.User.findOne({ where: { email: req.body.email } })
+    const query = { 
+      where: { email: req.body.email }
+    };
+    db.User.findOne(query)
       .then((user) => {
         if (user && user.validatePassword(req.body.password)) {
           const token = jwt.sign({ userId: user.id, roleId: user.roleId },
           secret, { expiresIn: '1 day' });
-          return res.status(200).send({ token, user });
+          return res.status(200).send({
+            token,
+            roleId: user.roleId
+          });
         }
 
         res.status(401)

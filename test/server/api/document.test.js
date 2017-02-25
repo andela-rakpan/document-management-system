@@ -155,7 +155,7 @@ describe('User API:', () => {
       });
 
       it('should not return document if document is \'private\' '
-      + 'and user is not owner/admin', (done) => {
+      + 'and user is not owner', (done) => {
         request.get(`/api/documents/${privateDoc.id}`)
           .set({
             'x-access-token': regularUserToken
@@ -168,7 +168,21 @@ describe('User API:', () => {
           });
       });
 
-      it('should return document if valid id is provided and user is admin',
+      it('should not return document if document is \'private\' '
+      + 'and user is not admin', (done) => {
+        request.get(`/api/documents/${privateDoc.id}`)
+          .set({
+            'x-access-token': regularUserToken
+          })
+          .end((error, response) => {
+            expect(response.status).to.equal(403);
+            expect(response.body.message).to
+              .equal('This is a private document');
+            done();
+          });
+      });
+
+      it('should return document if user is admin',
       (done) => {
         request.get(`/api/documents/${privateDoc.id}`)
           .set({
@@ -320,7 +334,7 @@ describe('User API:', () => {
           });
 
       });
-      it('should edit document if valid id is supplied and user is owner',
+      it('should edit document if user is owner',
       (done) => {
         request.put('/api/documents/2')
           .set({
@@ -335,7 +349,7 @@ describe('User API:', () => {
           });
       });
 
-      it('should edit document if valid id is supplied and user is admin',
+      it('should edit document if user is admin',
       (done) => {
         fieldsToUpdate.title = 'The Andela Bootcamp Experience';
         request.put('/api/documents/2')
@@ -388,7 +402,7 @@ describe('User API:', () => {
           });
       });
 
-      it('should delete document if valid id is supplied and user is owner',
+      it('should delete document if user is owner',
       (done) => {
         request.delete('/api/documents/2')
           .set({
@@ -402,7 +416,7 @@ describe('User API:', () => {
           });
       });
 
-      it('should delete document if valid id is supplied and user is admin',
+      it('should delete document if user is admin',
       (done) => {
         request.delete(`/api/documents/${publicDoc.id}`)
           .set({

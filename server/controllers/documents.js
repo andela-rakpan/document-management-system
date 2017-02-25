@@ -18,7 +18,7 @@ const documentsController = {
       })
       .then(document => res.status(201).send(document))
       .catch(error => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'  
+        message: 'An error occured. Ensure your parameters are valid!'
       }));
   },
 
