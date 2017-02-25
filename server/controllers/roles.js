@@ -13,7 +13,9 @@ const rolesController = {
         title: req.body.title
       })
       .then(role => res.status(201).send(role))
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 
   /**
@@ -50,7 +52,9 @@ const rolesController = {
         }
         res.status(200).send(role);
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 
   /**
@@ -75,7 +79,9 @@ const rolesController = {
           })
           .then(updatedRole => res.status(200).send(updatedRole));
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 
   /**
@@ -100,7 +106,9 @@ const rolesController = {
             message: 'Role deleted successfully.',
           }));
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 };
 

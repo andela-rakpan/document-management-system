@@ -17,7 +17,9 @@ const documentsController = {
         typeId: req.body.typeId,
       })
       .then(document => res.status(201).send(document))
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 
   /**
@@ -76,7 +78,9 @@ const documentsController = {
 
         res.send(document);
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 
   /**
@@ -106,7 +110,9 @@ const documentsController = {
           .update(req.body, { fields: Object.keys(req.body) })
           .then(updatedDocument => res.status(200).send(updatedDocument));
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 
   /**
@@ -138,7 +144,9 @@ const documentsController = {
             message: 'Document deleted successfully.',
           }));
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 
   /**

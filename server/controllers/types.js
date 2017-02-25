@@ -13,7 +13,9 @@ const typesController = {
         title: req.body.title
       })
       .then(type => res.status(201).send(type))
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 
   /**
@@ -50,7 +52,9 @@ const typesController = {
         }
         res.status(200).send(type);
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 
   /**
@@ -73,7 +77,9 @@ const typesController = {
           .update(req.body, { fields: Object.keys(req.body) })
           .then(updatedType => res.status(200).send(updatedType));
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 
   /**
@@ -98,7 +104,9 @@ const typesController = {
             message: 'Type deleted successfully.',
           }));
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 };
 

@@ -66,7 +66,9 @@ const usersController = {
             secret, { expiresIn: '1 day' });
             res.status(201).send({ token, user });
           })
-          .catch(error => res.status(400).send(error));
+          .catch(error => res.status(400).send({
+            message: 'An error occured. Ensure your parameters are valid!'  
+          }));
       });
   },
 
@@ -112,7 +114,9 @@ const usersController = {
             .send({ message: 'You can only retrieve your information!' });
         }
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 
    /**
@@ -149,7 +153,9 @@ const usersController = {
           });
         }
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 
    /**
@@ -179,7 +185,9 @@ const usersController = {
             .send({ message: 'You are not authorized to update this user' });
         }
       })
-      .catch(error => res.status(400).send(error));
+     .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 
    /**
@@ -209,7 +217,9 @@ const usersController = {
             message: 'User deleted successfully.',
           }));
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'  
+      }));
   },
 };
 
