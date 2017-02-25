@@ -18,8 +18,8 @@ const publicDocument = testHelper.testDocument5;
 describe('User API:', () => {
   let adminUserToken;
   let regularUserToken;
-  let document1 = {};
-  let document2 = {};
+  let privateDoc = {};
+  let publicDoc = {};
   const user = {};
 
   // Login users to access this endpoint
@@ -64,8 +64,8 @@ describe('User API:', () => {
             'x-access-token': regularUserToken
           })
           .end((error, response) => {
-            document1 = response.body;
-            expect(document1.title).to.equal(privateDocument.title);
+            privateDoc = response.body;
+            expect(privateDoc.title).to.equal(privateDocument.title);
             expect(response.status).to.equal(201);
             done();
           });
@@ -79,8 +79,8 @@ describe('User API:', () => {
             'x-access-token': regularUserToken
           })
           .end((error, response) => {
-            document2 = response.body;
-            expect(document2.title).to.equal(publicDocument.title);
+            publicDoc = response.body;
+            expect(publicDoc.title).to.equal(publicDocument.title);
             expect(response.status).to.equal(201);
             done();
           });
@@ -156,7 +156,7 @@ describe('User API:', () => {
 
       it('should not return document if document is \'private\' '
       + 'and user is not owner/admin', (done) => {
-        request.get(`/api/documents/${document1.id}`)
+        request.get(`/api/documents/${privateDoc.id}`)
           .set({
             'x-access-token': regularUserToken
           })
@@ -170,7 +170,7 @@ describe('User API:', () => {
 
       it('should return document if valid id is provided and user is admin',
       (done) => {
-        request.get(`/api/documents/${document1.id}`)
+        request.get(`/api/documents/${privateDoc.id}`)
           .set({
             'x-access-token': adminUserToken
           })
@@ -193,7 +193,7 @@ describe('User API:', () => {
 
       it(`should return document if document is 'public'
       and user is not admin/owner`, (done) => {
-        request.get(`/api/documents/${document2.id}`)
+        request.get(`/api/documents/${publicDoc.id}`)
           .set({
             'x-access-token': regularUserToken
           })
@@ -307,7 +307,7 @@ describe('User API:', () => {
       });
 
       it('should not edit document if user is not owner', (done) => {
-        request.put(`/api/documents/${document1.id}`)
+        request.put(`/api/documents/${privateDoc.id}`)
           .set({
             'x-access-token': regularUserToken
           })
@@ -376,7 +376,7 @@ describe('User API:', () => {
       });
 
       it('should not delete document if user is not owner', (done) => {
-        request.delete(`/api/documents/${document1.id}`)
+        request.delete(`/api/documents/${privateDoc.id}`)
           .set({
             'x-access-token': regularUserToken
           })
@@ -404,7 +404,7 @@ describe('User API:', () => {
 
       it('should delete document if valid id is supplied and user is admin',
       (done) => {
-        request.delete(`/api/documents/${document2.id}`)
+        request.delete(`/api/documents/${publicDoc.id}`)
           .set({
             'x-access-token': adminUserToken
           })

@@ -1,5 +1,4 @@
 import db from '../models';
-import Helpers from './helpers';
 
 const documentsController = {
   /**
@@ -29,9 +28,9 @@ const documentsController = {
    */
   listAll(req, res) {
     let query = {};
-    query.limit = Number(req.query.limit) !== 'NaN' ? req.query.limit : 10;
-    query.offset = Number(req.query.limit) !== 'NaN' ? req.query.offset : 0;
-    if (Helpers.isAdmin(req)) {
+    query.limit = (req.query.limit > 0) ? req.query.limit : 10;
+    query.offset = (req.query.limit > 0) ? req.query.offset : 0;
+    if (req.decoded.isAdmin) {
       db.Document
         .findAll(query)
         .then(documents => res.status(200).send(documents));
@@ -61,12 +60,12 @@ const documentsController = {
           });
         }
 
-        if (Helpers.isAdmin(req)) {
+        if (req.decoded.isAdmin) {
           return res.status(200).send(document);
         }
 
         if (document.access === 'private' &&
-          !Helpers.isCurrentUser(req, document.ownerId)) {
+          req.decoded.userId !== document.ownerId)) {
           return res.status(403)
             .send({ message: 'This is a private document' });
         }
@@ -92,8 +91,8 @@ const documentsController = {
           });
         }
 
-        if (!Helpers.isAdmin(req) &&
-          !Helpers.isCurrentUser(req, document.ownerId)) {
+        if (!req.decoded.isAdmin &&
+          req.decoded.userId !== document.ownerId) {
           return res.status(403).send({
             message: 'You are not authorized to update this document'
           });
@@ -122,8 +121,8 @@ const documentsController = {
           });
         }
 
-        if (!Helpers.isAdmin(req) &&
-          !Helpers.isCurrentUser(req, document.ownerId)) {
+        if (!req.decoded.isAdmin &&
+          req.decoded.userId !== document.ownerId) {
           return res.status(403).send({
             message: 'You are not authorized to delete this document'
           });
@@ -173,7 +172,7 @@ const documentsController = {
       }
     };
 
-    if (Helpers.isAdmin(req)) {
+    if (req.decoded.isAdmin) {
       query = {
         where: {
           $or: {
@@ -188,8 +187,8 @@ const documentsController = {
       };
     }
 
-    query.limit = Number(req.query.limit) !== 'NaN' ? req.query.limit : 10;
-    query.offset = Number(req.query.limit) !== 'NaN' ? req.query.offset : 0;
+    query.limit = (req.query.limit > 0) ? req.query.limit : 10;
+    query.offset = (req.query.limit > 0) ? req.query.offset : 0;
     query.order = '"createdAt" DESC';
     db.Document
       .findAll(query)
@@ -227,7 +226,7 @@ const documentsController = {
       }
     };
 
-    if (Helpers.isAdmin(req)) {
+    if (req.decoded.isAdmin) {
       query = {
         where: {
           $or: {
@@ -241,8 +240,8 @@ const documentsController = {
         }
       };
     }
-    query.limit = Number(req.query.limit) !== 'NaN' ? req.query.limit : 10;
-    query.offset = Number(req.query.limit) !== 'NaN' ? req.query.offset : 0;
+    query.limit = (req.query.limit > 0) ? req.query.limit : 10;
+    query.offset = (req.query.limit > 0) ? req.query.offset : 0;
     query.order = '"createdAt" DESC';
     db.Document
       .findAll(query)

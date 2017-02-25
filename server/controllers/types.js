@@ -24,8 +24,8 @@ const typesController = {
    */
   list(req, res) {
     const query = {};
-    query.limit = Number(req.query.limit) !== 'NaN' ? req.query.limit : 10;
-    query.offset = Number(req.query.limit) !== 'NaN' ? req.query.offset : 0;
+    query.limit = (req.query.limit > 0) ? req.query.limit : 10;
+    query.offset = (req.query.limit > 0) ? req.query.offset : 0;
     db.Type
       .all(query)
       .then(types => res.status(200).send(types));

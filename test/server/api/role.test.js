@@ -147,7 +147,7 @@ describe('Role API:', () => {
             'x-access-token': adminUserToken
           })
           .end((error, response) => {
-            expect(response.status).to.equal(404);
+            expect(response.status).to.equal(400);
             done();
           });
       });

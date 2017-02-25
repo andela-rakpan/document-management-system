@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import db from '../models';
-import Helpers from './helpers';
 
 /**
  * Secret token for jsonwebtoken
@@ -79,8 +78,8 @@ const usersController = {
    */
   list(req, res) {
     const query = {};
-    query.limit = Number(req.query.limit) !== 'NaN' ? req.query.limit : 10;
-    query.offset = Number(req.query.limit) !== 'NaN' ? req.query.offset : 0;
+    query.limit = (req.query.limit > 0) ? req.query.limit : 10;
+    query.offset = (req.query.limit > 0) ? req.query.offset : 0;
     db.User
       .findAll(query)
       .then(users => res.status(200).send(users));
@@ -101,7 +100,7 @@ const usersController = {
             message: 'User Not Found',
           });
         }
-        if (Helpers.isAdmin(req) || Helpers.isCurrentUser(req, user.id)) {
+        if (req.decoded.isAdmin || req.decoded.userId === user.id) {
           res.status(200).send(user);
         } else {
           res.status(403)
@@ -132,7 +131,7 @@ const usersController = {
           });
         }
 
-        if (Helpers.isAdmin(req) || Helpers.isCurrentUser(req, user.id)) {
+        if (req.decoded.isAdmin || req.decoded.userId === user.id) {
           res.status(200).send(user);
         } else {
           res.status(403).send({
@@ -164,7 +163,7 @@ const usersController = {
           });
         }
 
-        if (Helpers.isAdmin(req) || Helpers.isCurrentUser(req, user.id)) {
+        if (req.decoded.isAdmin || req.decoded.userId === user.id) {
           user
             .update(req.body, { fields: Object.keys(req.body) })
             .then(updatedUser => res.status(200).send(updatedUser));

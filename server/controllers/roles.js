@@ -24,8 +24,8 @@ const rolesController = {
    */
   list(req, res) {
     const query = {};
-    query.limit = Number(req.query.limit) !== 'NaN' ? req.query.limit : 10;
-    query.offset = Number(req.query.limit) !== 'NaN' ? req.query.offset : 0;
+    query.limit = (req.query.limit > 0) ? req.query.limit : 10;
+    query.offset = (req.query.limit > 0) ? req.query.offset : 0;
     db.Role
       .all(query)
       .then(roles => res.status(200).send(roles));
@@ -53,7 +53,7 @@ const rolesController = {
         }
         res.status(200).send(role);
       })
-      .catch(error => res.status(404).send(error));
+      .catch(error => res.status(400).send(error));
   },
 
   /**

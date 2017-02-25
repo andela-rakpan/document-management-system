@@ -37,7 +37,7 @@ const Authentication = {
 
   /**
    * verifyAdmin - Verifies that the user role supplied is an admin
-   *
+   * For strictly admin routes
    * @param  {Object} req  Request Object
    * @param  {Object} res  Response Object
    * @param  {Object} next
@@ -53,6 +53,26 @@ const Authentication = {
             message: 'Access Restricted; You are not an admin!'
           });
         }
+      });
+  },
+
+  /**
+   * isAdmin - Verifies if the user is an admin or not
+   *
+   * @param  {Object} req  Request Object
+   * @param  {Object} res  Response Object
+   * @param  {Object} next
+   * @returns {Object} Response Object
+   */
+  isAdmin(req, res, next) {
+    req.decoded.isAdmin = false;
+    db.Role.findById(req.decoded.roleId)
+      .then((role) => {
+
+        if (role.title === 'admin') {
+          req.decoded.isAdmin = true;
+        }
+        next();
       });
   }
 };

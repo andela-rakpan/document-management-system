@@ -72,7 +72,7 @@ describe('Authentication:', () => {
       });
     });
 
-    // Authenticate an admin
+    // Authenticate an admin - strictly admin route
     describe('GET: (/api/users) - ', () => {
       it('should not authenticate an admin if no token is provided', (done) => {
         request.get('/api/users')
