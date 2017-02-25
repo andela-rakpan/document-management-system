@@ -9,13 +9,13 @@ const usersRoute = (router) => {
 
   // Update, delete or get a specific user
   router.route('/users/:id')
-    .put(Authentication.verifyToken, usersController.updateUser)
-    .get(Authentication.verifyToken, usersController.retrieveUser)
+    .put(Authentication.verifyToken, Authentication.isAdmin, usersController.updateUser)
+    .get(Authentication.verifyToken, Authentication.isAdmin, usersController.retrieveUser)
     .delete(Authentication.verifyToken, Authentication.verifyAdmin, usersController.deleteUser);
 
   // Get a single user's documents
   router.route('/users/:id/documents')
-    .get(Authentication.verifyToken, usersController.retrieveDocuments);
+    .get(Authentication.verifyToken, Authentication.isAdmin, usersController.retrieveDocuments);
 
   // Log in a user
   router.route('/users/login')

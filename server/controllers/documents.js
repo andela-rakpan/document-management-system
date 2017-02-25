@@ -13,7 +13,7 @@ const documentsController = {
         title: req.body.title,
         content: req.body.content,
         access: req.body.access,
-        ownerId: req.body.ownerId,
+        ownerId: req.decoded.userId,
         typeId: req.body.typeId,
       })
       .then(document => res.status(201).send(document))
@@ -29,18 +29,22 @@ const documentsController = {
   listAll(req, res) {
     let query = {};
     query.limit = (req.query.limit > 0) ? req.query.limit : 10;
-    query.offset = (req.query.limit > 0) ? req.query.offset : 0;
+    query.offset = (req.query.offset > 0) ? req.query.offset : 0;
     if (req.decoded.isAdmin) {
       db.Document
-        .findAll(query)
-        .then(documents => res.status(200).send(documents));
+        .findAndCountAll(query)
+        .then(documents => res.status(200).send({
+          documents: documents.rows, count: documents.count
+        }));
     } else {
       query = {
         where: { access: 'public' }
       };
       db.Document
-        .findAll(query)
-        .then(documents => res.status(200).send(documents));
+        .findAndCountAll(query)
+        .then(documents => res.status(200).send({
+          documents: documents.rows, count: documents.count
+        }));
     }
   },
 
@@ -65,7 +69,7 @@ const documentsController = {
         }
 
         if (document.access === 'private' &&
-          req.decoded.userId !== document.ownerId)) {
+          req.decoded.userId !== document.ownerId) {
           return res.status(403)
             .send({ message: 'This is a private document' });
         }
@@ -188,11 +192,13 @@ const documentsController = {
     }
 
     query.limit = (req.query.limit > 0) ? req.query.limit : 10;
-    query.offset = (req.query.limit > 0) ? req.query.offset : 0;
+    query.offset = (req.query.offset > 0) ? req.query.offset : 0;
     query.order = '"createdAt" DESC';
     db.Document
-      .findAll(query)
-      .then(documents => res.status(200).send(documents));
+      .findAndCountAll(query)
+      .then(documents => res.status(200).send({
+          documents: documents.rows, count: documents.count
+      }));
   },
 
    /**
@@ -241,11 +247,13 @@ const documentsController = {
       };
     }
     query.limit = (req.query.limit > 0) ? req.query.limit : 10;
-    query.offset = (req.query.limit > 0) ? req.query.offset : 0;
+    query.offset = (req.query.offset > 0) ? req.query.offset : 0;
     query.order = '"createdAt" DESC';
     db.Document
-      .findAll(query)
-      .then(documents => res.status(200).send(documents));
+      .findAndCountAll(query)
+      .then(documents => res.status(200).send({
+        documents: documents.rows, count: documents.count
+      }));
   },
 };
 

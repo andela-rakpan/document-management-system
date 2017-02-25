@@ -25,10 +25,12 @@ const typesController = {
   list(req, res) {
     const query = {};
     query.limit = (req.query.limit > 0) ? req.query.limit : 10;
-    query.offset = (req.query.limit > 0) ? req.query.offset : 0;
+    query.offset = (req.query.offset > 0) ? req.query.offset : 0;
     db.Type
-      .all(query)
-      .then(types => res.status(200).send(types));
+      .findAndCountAll(query)
+      .then(types => res.status(200).send({
+        types: types.rows, count: types.count
+      }));
   },
 
   /**
@@ -39,12 +41,7 @@ const typesController = {
    */
   retrieve(req, res) {
     db.Type
-      .findById(req.params.id, {
-        include: [{
-          model: db.Document,
-          as: 'documents',
-        }],
-      })
+      .findById(req.params.id)
       .then((type) => {
         if (!type) {
           return res.status(404).send({

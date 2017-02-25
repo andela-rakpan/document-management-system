@@ -79,10 +79,13 @@ const usersController = {
   list(req, res) {
     const query = {};
     query.limit = (req.query.limit > 0) ? req.query.limit : 10;
-    query.offset = (req.query.limit > 0) ? req.query.offset : 0;
+    query.offset = (req.query.offset > 0) ? req.query.offset : 0;
+    query.attributes = { exclude: ['password'] };
     db.User
-      .findAll(query)
-      .then(users => res.status(200).send(users));
+      .findAndCountAll(query)
+      .then(users => res.status(200).send({
+        users: users.rows, count: users.count
+      }));
   },
 
    /**
@@ -93,7 +96,9 @@ const usersController = {
    */
   retrieveUser(req, res) {
     db.User
-      .findById(req.params.id)
+      .findById(req.params.id, {
+        attributes : { exclude: ['password'] }
+      })
       .then((user) => {
         if (!user) {
           return res.status(404).send({
@@ -118,12 +123,7 @@ const usersController = {
    */
   retrieveDocuments(req, res) {
     db.User
-      .findById(req.params.id, {
-        include: [{
-          model: db.Document,
-          as: 'documents',
-        }],
-      })
+      .findById(req.params.id)
       .then((user) => {
         if (!user) {
           return res.status(404).send({
@@ -132,7 +132,17 @@ const usersController = {
         }
 
         if (req.decoded.isAdmin || req.decoded.userId === user.id) {
-          res.status(200).send(user);
+          const query = {
+            where: { ownerId: user.id}
+          };
+          query.limit = (req.query.limit > 0) ? req.query.limit : 10;
+          query.offset = (req.query.offset > 0) ? req.query.offset : 0;
+          db.Document
+            .findAndCountAll(query)
+            .then(documents => res.status(200).send({
+              documents: documents.rows,
+              count: documents.count
+            }));
         } else {
           res.status(403).send({
             message: 'You are not authorized to access this document(s)'
@@ -150,12 +160,7 @@ const usersController = {
    */
   updateUser(req, res) {
     db.User
-      .findById(req.params.id, {
-        include: [{
-          model: db.Document,
-          as: 'documents',
-        }],
-      })
+      .findById(req.params.id)
       .then((user) => {
         if (!user) {
           return res.status(404).send({
@@ -166,7 +171,9 @@ const usersController = {
         if (req.decoded.isAdmin || req.decoded.userId === user.id) {
           user
             .update(req.body, { fields: Object.keys(req.body) })
-            .then(updatedUser => res.status(200).send(updatedUser));
+            .then(updatedUser => res.status(200).send({
+              message: 'User updated successfully'
+            }));
         } else {
           res.status(403)
             .send({ message: 'You are not authorized to update this user' });

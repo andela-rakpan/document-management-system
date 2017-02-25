@@ -25,10 +25,12 @@ const rolesController = {
   list(req, res) {
     const query = {};
     query.limit = (req.query.limit > 0) ? req.query.limit : 10;
-    query.offset = (req.query.limit > 0) ? req.query.offset : 0;
+    query.offset = (req.query.offset > 0) ? req.query.offset : 0;
     db.Role
-      .all(query)
-      .then(roles => res.status(200).send(roles));
+      .findAndCountAll(query)
+      .then(roles => res.status(200).send({
+        roles: roles.rows, count: roles.count  
+      }));
   },
 
   /**
@@ -39,12 +41,7 @@ const rolesController = {
    */
   retrieve(req, res) {
     db.Role
-      .findById(req.params.id, {
-        include: [{
-          model: db.User,
-          as: 'users',
-        }],
-      })
+      .findById(req.params.id)
       .then((role) => {
         if (!role) {
           return res.status(404).send({
