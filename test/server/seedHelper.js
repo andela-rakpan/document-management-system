@@ -85,7 +85,10 @@ class SeedHelper {
    * @returns {object} - A Promise object
    */
   static populateTypeTable() {
-    const types = [testHelper.testType1, testHelper.testType2];
+    const types = [
+      testHelper.testType1,
+      testHelper.testType2
+    ];
     return model.Type.bulkCreate(types);
   }
 

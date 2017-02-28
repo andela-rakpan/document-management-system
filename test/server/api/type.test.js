@@ -4,7 +4,7 @@ import supertest from 'supertest';
 import chai from 'chai';
 
 import testHelper from '../testHelper';
-import app from '../../../tools/devServer';
+import app from '../../../lib/devServer';
 
 const expect = chai.expect;
 const request = supertest.agent(app);
@@ -94,8 +94,8 @@ describe('Type API:', () => {
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
-            expect(Array.isArray(response.body)).to.be.true;
-            expect(response.body.length).to.be.greaterThan(0);
+            expect(Array.isArray(response.body.types)).to.be.true;
+            expect(response.body.types.length).to.equal(3);
             done();
           });
       });

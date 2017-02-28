@@ -9,12 +9,20 @@ const testHelper = {
     title: 'regular'
   },
 
+  roleParams: {
+    title: 'cool admin'
+  },
+
   testType1: {
     title: 'note'
   },
 
   testType2: {
     title: 'confidential'
+  },
+
+  testType3: {
+    title: 'quotes'
   },
 
   testUser1: {
@@ -49,10 +57,10 @@ const testHelper = {
   },
 
   testUser4: {
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
+    firstname: 'Uyiosa',
+    lastname: 'Enabulele',
+    email: 'uyiosa.enabulele@andela.com',
+    password: 'IamUyiosa',
     roleId: 2
   },
 
@@ -64,7 +72,7 @@ const testHelper = {
       + 'them as full-time distributed team members with companies that '
       + 'range from Microsoft and IBM to dozens of high-growth startups',
     access: 'public',
-    ownerId: 2,
+    ownerId: 3,
     typeId: 1
   },
 
@@ -143,6 +151,14 @@ const testHelper = {
     access: 'private',
     ownerId: 3,
     typeId: 1
+  },
+
+  testDocument8: {
+    title: faker.commerce.department(),
+    content: faker.lorem.paragraph(),
+    access: 'public',
+    ownerId: 2,
+    typeId: 2
   },
 };
 

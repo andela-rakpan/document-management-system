@@ -4,7 +4,7 @@ import supertest from 'supertest';
 import chai from 'chai';
 
 import testHelper from '../testHelper';
-import app from '../../../tools/devServer';
+import app from '../../../lib/devServer';
 
 const expect = chai.expect;
 const request = supertest.agent(app);
@@ -12,7 +12,7 @@ const request = supertest.agent(app);
 const adminUser = testHelper.testUser1;
 const regularUser = testHelper.testUser2;
 
-describe('User API:', () => {
+describe('Search API:', () => {
   let adminUserToken;
   let regularUserToken;
   const user = {};
@@ -28,7 +28,7 @@ describe('User API:', () => {
           .send(regularUser)
           .end((err, res) => {
             regularUserToken = res.body.token;
-            user.id = res.body.user.id;
+            user.id = res.body.userId;
             done();
           });
       });
@@ -36,11 +36,11 @@ describe('User API:', () => {
 
   // Test documents search http requests
   describe('Search Documents REQUESTS:', () => {
-    // GET requests - Search public document(s) for specified term(s)
-    describe('GET: (/api/search/documents/public/:term) - ', () => {
+    // GET requests - Search document(s) for specified term(s)
+    describe('GET: (/api/search/documents?term) - ', () => {
       const term = 'the';
       it('should not return document(s) if search term is empty', (done) => {
-        request.get('/api/search/documents/public?term=')
+        request.get('/api/search/documents?term=')
           .set({
             'x-access-token': adminUserToken
           })
@@ -53,76 +53,28 @@ describe('User API:', () => {
       });
 
       it('should return all matching document(s) if user is admin', (done) => {
-        request.get(`/api/search/documents/public?term=${term}`)
-          .set({
-            'x-access-token': adminUserToken
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(200);
-            expect(Array.isArray(response.body)).to.be.true;
-            expect(response.body.length).to.be.greaterThan(0);
-            done();
-          });
-      });
-
-      it('should return \'public\' matching documents if user is not admin',
-      (done) => {
-        request.get(`/api/search/documents/public?term=${term}`)
-          .set({
-            'x-access-token': regularUserToken
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(200);
-            expect(Array.isArray(response.body)).to.be.true;
-            expect(response.body.length).to.be.greaterThan(0);
-            response.body.forEach((document) => {
-              expect(document.access).to.equal('public');
-            });
-            done();
-          });
-      });
-    });
-
-    // GET requests - Search owner document(s) for specified term(s)
-    describe('GET: (/api/search/documents) - ', () => {
-      const term = 'the';
-      it('should not return document(s) if search term is empty', (done) => {
-        request.get('/api/search/documents?term=')
-          .set({
-            'x-access-token': adminUserToken
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(400);
-            expect(response.body.message).to.equal('Invalid Search Parameter!');
-            done();
-          });
-      });
-
-      it('should return all matching document(s) if user is admin', (done) => {
         request.get(`/api/search/documents?term=${term}`)
           .set({
             'x-access-token': adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
-            expect(Array.isArray(response.body)).to.be.true;
-            expect(response.body.length).to.be.greaterThan(0);
+            expect(Array.isArray(response.body.documents)).to.be.true;
+            expect(response.body.documents.length).to.be.greaterThan(0);
             done();
           });
       });
 
-      it('should return all owner\'s matching documents if user is not admin',
+      it('should return matching documents if user is not admin',
       (done) => {
         request.get(`/api/search/documents?term=${term}`)
           .set({
             'x-access-token': regularUserToken
           })
           .end((error, response) => {
-            expect(Array.isArray(response.body)).to.be.true;
-            response.body.forEach((document) => {
-              expect(document.ownerId).to.equal(2);
-            });
             expect(response.status).to.equal(200);
+            expect(Array.isArray(response.body.documents)).to.be.true;
+            expect(response.body.documents.length).to.be.greaterThan(0);
             done();
           });
       });

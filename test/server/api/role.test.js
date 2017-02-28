@@ -3,7 +3,7 @@
 import supertest from 'supertest';
 import chai from 'chai';
 
-import app from '../../../tools/devServer';
+import app from '../../../lib/devServer';
 import testHelper from '../testHelper';
 
 const expect = chai.expect;
@@ -121,8 +121,8 @@ describe('Role API:', () => {
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
-            expect(Array.isArray(response.body)).to.be.true;
-            expect(response.body.length).to.be.greaterThan(0);
+            expect(Array.isArray(response.body.roles)).to.be.true;
+            expect(response.body.roles.length).to.equal(3);
             done();
           });
       });

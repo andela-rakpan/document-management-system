@@ -3,7 +3,7 @@ import supertest from 'supertest';
 import chai from 'chai';
 
 import testHelper from '../testHelper';
-import app from '../../../tools/devServer';
+import app from '../../../lib/devServer';
 
 const expect = chai.expect;
 const request = supertest.agent(app);
@@ -25,7 +25,6 @@ describe('Authentication:', () => {
           .send(regularUser)
           .end((err, res) => {
             regularUserToken = res.body.token;
-            user.id = res.body.user.id;
             done();
           });
       });
@@ -65,8 +64,8 @@ describe('Authentication:', () => {
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
-            expect(Array.isArray(response.body)).to.be.true;
-            expect(response.body.length).to.be.greaterThan(0);
+            expect(Array.isArray(response.body.documents)).to.be.true;
+            expect(response.body.documents.length).to.equal(4);
             done();
           });
       });
@@ -111,14 +110,14 @@ describe('Authentication:', () => {
       });
 
       it('should authenticate an admin if user is admin', (done) => {
-        request.post('/api/users/logout')
+        request.get('/api/users')
           .set({
-            'x-access-token': regularUserToken
+            'x-access-token': adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
-            expect(Array.isArray(response.body)).to.be.true;
-            expect(response.body.length).to.be.greaterThan(0);
+            expect(Array.isArray(response.body.users)).to.be.true;
+            expect(response.body.users.length).to.equal(3);
             done();
           });
       });
