@@ -71,12 +71,12 @@ const documentsController = {
         }
 
         if (document.access === 'private' &&
-          req.decoded.userId !== document.ownerId) {
+        !(req.decoded.userId === document.ownerId)) {
           return res.status(403)
             .send({ message: 'This is a private document' });
         }
 
-        res.send(document);
+        res.status(200).send(document);
       })
       .catch(error => res.status(400).send({
         message: 'An error occured. Ensure your parameters are valid!'  
@@ -100,7 +100,7 @@ const documentsController = {
         }
 
         if (!req.decoded.isAdmin &&
-          req.decoded.userId !== document.ownerId) {
+          !(req.decoded.userId === document.ownerId)) {
           return res.status(403).send({
             message: 'You are not authorized to update this document'
           });
@@ -108,7 +108,10 @@ const documentsController = {
 
         document
           .update(req.body, { fields: Object.keys(req.body) })
-          .then(updatedDocument => res.status(200).send(updatedDocument));
+          .then(updatedDocument => res.status(200).send({ 
+            message: 'Update successful!',
+            updatedDocument
+          }));
       })
       .catch(error => res.status(400).send({
         message: 'An error occured. Ensure your parameters are valid!'  
@@ -132,7 +135,7 @@ const documentsController = {
         }
 
         if (!req.decoded.isAdmin &&
-          req.decoded.userId !== document.ownerId) {
+        !(req.decoded.userId === document.ownerId)) {
           return res.status(403).send({
             message: 'You are not authorized to delete this document'
           });
@@ -155,7 +158,7 @@ const documentsController = {
    * @param {Object} res Response object
    * @returns {Object} - Returns response object
    */
-  searchPublic(req, res) {
+  search(req, res) {
     const term = req.query.term;
 
     if (term === '') {
@@ -175,9 +178,9 @@ const documentsController = {
             }
           }
         }, {
-          $and: {
-            access: 'public',
-            ownerId: { $ne: req.decoded.userId }
+          $or: {
+            access: { $ne: 'private' },
+            ownerId: req.decoded.userId
           }
         }
         ]
@@ -206,61 +209,6 @@ const documentsController = {
       .findAndCountAll(query)
       .then(documents => res.status(200).send({
           documents: documents.rows, count: documents.count
-      }));
-  },
-
-   /**
-   * Gets all owner documents relevant to search term
-   * @param {Object} req Request object
-   * @param {Object} res Response object
-   * @returns {Object} - Returns response object
-   */
-  search(req, res) {
-    const term = req.query.term;
-
-    if (term === '') {
-      return res.status(400)
-        .send({ message: 'Invalid Search Parameter!' });
-    }
-    let query = {
-      where: {
-        $and: [{
-          $or: {
-            title: {
-              $iLike: `%${term}%`
-            },
-            content: {
-              $iLike: `%${term}%`
-            }
-          }
-        }, {
-          ownerId: req.decoded.userId,
-        }
-        ]
-      }
-    };
-
-    if (req.decoded.isAdmin) {
-      query = {
-        where: {
-          $or: {
-            title: {
-              $iLike: `%${term}%`
-            },
-            content: {
-              $iLike: `%${term}%`
-            }
-          }
-        }
-      };
-    }
-    query.limit = (req.query.limit > 0) ? req.query.limit : 10;
-    query.offset = (req.query.offset > 0) ? req.query.offset : 0;
-    query.order = '"createdAt" DESC';
-    db.Document
-      .findAndCountAll(query)
-      .then(documents => res.status(200).send({
-        documents: documents.rows, count: documents.count
       }));
   },
 };

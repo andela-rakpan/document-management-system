@@ -4,23 +4,24 @@ import supertest from 'supertest';
 import chai from 'chai';
 
 import testHelper from '../testHelper';
-import app from '../../../tools/devServer';
+import app from '../../../lib/devServer';
 
 const expect = chai.expect;
 const request = supertest.agent(app);
 
 const adminUser = testHelper.testUser1;
 const regularUser = testHelper.testUser2;
+const regularUser2 = testHelper.testUser4;
 const invalidDocument = testHelper.invalidDocument;
 const privateDocument = testHelper.testDocument4;
 const publicDocument = testHelper.testDocument5;
 
-describe('User API:', () => {
+describe('Document API:', () => {
   let adminUserToken;
   let regularUserToken;
+  let regularUserToken2;
   let privateDoc = {};
   let publicDoc = {};
-  const user = {};
 
   // Login users to access this endpoint
   before((done) => {
@@ -33,8 +34,15 @@ describe('User API:', () => {
           .send(regularUser)
           .end((err, res) => {
             regularUserToken = res.body.token;
-            user.id = res.body.user.id;
-            done();
+            regularUser.id = res.body.userId;
+
+            request.post('/api/users/login')
+              .send(regularUser2)
+              .end((err2, res2) => {
+                regularUserToken2 = res2.body.token;
+                regularUser2.id = res2.body.userId;
+                done();
+              });
           });
       });
   });
@@ -61,7 +69,7 @@ describe('User API:', () => {
         request.post('/api/documents')
           .send(privateDocument)
           .set({
-            'x-access-token': regularUserToken
+            'x-access-token': regularUserToken2
           })
           .end((error, response) => {
             privateDoc = response.body;
@@ -76,7 +84,7 @@ describe('User API:', () => {
         request.post('/api/documents')
           .send(publicDocument)
           .set({
-            'x-access-token': regularUserToken
+            'x-access-token': regularUserToken2
           })
           .end((error, response) => {
             publicDoc = response.body;
@@ -108,9 +116,11 @@ describe('User API:', () => {
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
-            expect(Array.isArray(response.body)).to.be.true;
-            expect(response.body.length).to.be.greaterThan(0);
-            expect(response.body[0].access).to.equal('public');
+            expect(Array.isArray(response.body.documents)).to.be.true;
+            expect(response.body.documents.length).to.equal(4);
+            response.body.documents.forEach((document)=> {
+              expect(document.access).to.equal('public');
+            });
             done();
           });
       });
@@ -122,8 +132,8 @@ describe('User API:', () => {
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
-            expect(Array.isArray(response.body)).to.be.true;
-            expect(response.body.length).to.be.greaterThan(0);
+            expect(Array.isArray(response.body.documents)).to.be.true;
+            expect(response.body.documents.length).to.equal(7);
             done();
           });
       });
@@ -195,9 +205,9 @@ describe('User API:', () => {
       });
 
       it('should return the document if user is owner', (done) => {
-        request.get('/api/documents/2')
+        request.get(`/api/documents/${privateDoc.id}`)
           .set({
-            'x-access-token': regularUserToken
+            'x-access-token': regularUserToken2
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -206,7 +216,20 @@ describe('User API:', () => {
       });
 
       it(`should return document if document is 'public'
-      and user is not admin/owner`, (done) => {
+      and user is not owner`, (done) => {
+        request.get(`/api/documents/${publicDoc.id}`)
+          .set({
+            'x-access-token': regularUserToken
+          })
+          .end((error, response) => {
+            expect(response.status).to.equal(200);
+            expect(response.body.access).to.equal('public');
+            done();
+          });
+      });
+
+      it(`should return document if document is 'public'
+      and user is not admin`, (done) => {
         request.get(`/api/documents/${publicDoc.id}`)
           .set({
             'x-access-token': regularUserToken
@@ -245,8 +268,7 @@ describe('User API:', () => {
           });
       });
 
-      it('should not return user\'s documents if user is not document owner',
-      (done) => {
+      it('should not return user\'s documents if user is not owner',(done) => {
         request.get('/api/users/3/documents')
           .set({
             'x-access-token': regularUserToken
@@ -260,27 +282,27 @@ describe('User API:', () => {
       });
 
       it('should return user\'s documents if user is admin', (done) => {
-        request.get(`/api/users/${user.id}/documents`)
+        request.get(`/api/users/${regularUser.id}/documents`)
           .set({
             'x-access-token': adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
             expect(Array.isArray(response.body.documents)).to.be.true;
-            expect(response.body.documents.length).to.be.greaterThan(0);
+            expect(response.body.documents.length).to.equal(2);
             done();
           });
       });
 
       it('should return user\'s documents if user is owner', (done) => {
-        request.get(`/api/users/${user.id}/documents`)
+        request.get(`/api/users/${regularUser.id}/documents`)
           .set({
             'x-access-token': regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
             expect(Array.isArray(response.body.documents)).to.be.true;
-            expect(response.body.documents.length).to.be.greaterThan(0);
+            expect(response.body.documents.length).to.equal(2);
             done();
           });
       });
@@ -342,9 +364,10 @@ describe('User API:', () => {
           })
           .send(fieldsToUpdate)
           .end((error, response) => {
+            const updatedDocument = response.body.updatedDocument;
             expect(response.status).to.equal(200);
-            expect(response.body.title).to.equal(fieldsToUpdate.title);
-            expect(response.body.content).to.equal(fieldsToUpdate.content);
+            expect(updatedDocument.title).to.equal(fieldsToUpdate.title);
+            expect(updatedDocument.content).to.equal(fieldsToUpdate.content);
             done();
           });
       });
@@ -358,8 +381,9 @@ describe('User API:', () => {
           })
           .send(fieldsToUpdate)
           .end((error, response) => {
+            const updatedDocument = response.body.updatedDocument;
             expect(response.status).to.equal(200);
-            expect(response.body.title).to.equal(fieldsToUpdate.title);
+            expect(updatedDocument.title).to.equal(fieldsToUpdate.title);
             done();
           });
       });
@@ -404,9 +428,9 @@ describe('User API:', () => {
 
       it('should delete document if user is owner',
       (done) => {
-        request.delete('/api/documents/2')
+        request.delete(`/api/documents/${privateDoc.id}`)
           .set({
-            'x-access-token': regularUserToken
+            'x-access-token': regularUserToken2
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -418,7 +442,7 @@ describe('User API:', () => {
 
       it('should delete document if user is admin',
       (done) => {
-        request.delete(`/api/documents/${publicDoc.id}`)
+        request.delete('/api/documents/5')
           .set({
             'x-access-token': adminUserToken
           })
