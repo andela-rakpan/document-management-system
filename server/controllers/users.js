@@ -14,7 +14,7 @@ const usersController = {
    * @returns {Object} Response object
    */
   login(req, res) {
-    const query = { 
+    const query = {
       where: { email: req.body.email }
     };
     db.User.findOne(query)
@@ -24,6 +24,7 @@ const usersController = {
           secret, { expiresIn: '1 day' });
           return res.status(200).send({
             token,
+            userId: user.id,
             roleId: user.roleId
           });
         }
@@ -70,7 +71,15 @@ const usersController = {
           .then((user) => {
             const token = jwt.sign({ userId: user.id, roleId: user.roleId },
             secret, { expiresIn: '1 day' });
-            res.status(201).send({ token, user });
+            res.status(201).send({ token,
+              user: {
+                id: user.id,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                email: user.email,
+                roleId: user.roleId
+              }
+            });
           })
           .catch(error => res.status(400).send({
             message: 'An error occured. Ensure your parameters are valid!'  
@@ -172,7 +181,9 @@ const usersController = {
    */
   updateUser(req, res) {
     db.User
-      .findById(req.params.id)
+      .findById(req.params.id, {
+        attributes: { exclude: ['password'] }
+      })
       .then((user) => {
         if (!user) {
           return res.status(404).send({
@@ -184,7 +195,8 @@ const usersController = {
           user
             .update(req.body, { fields: Object.keys(req.body) })
             .then(updatedUser => res.status(200).send({
-              message: 'User updated successfully'
+              message: 'User updated successfully',
+              updatedUser
             }));
         } else {
           res.status(403)

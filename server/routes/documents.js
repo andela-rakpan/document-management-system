@@ -13,11 +13,7 @@ const documentsRoute = (router) => {
     .put(Authentication.verifyToken, Authentication.isAdmin, documentsController.update)
     .delete(Authentication.verifyToken, Authentication.isAdmin, documentsController.delete);
 
-  // Search public documents
-  router.route('/search/documents/public')
-    .get(Authentication.verifyToken, Authentication.isAdmin, documentsController.searchPublic);
-
-  // Search onwer documents
+  // Search documents
   router.route('/search/documents')
     .get(Authentication.verifyToken, Authentication.isAdmin, documentsController.search);
 };

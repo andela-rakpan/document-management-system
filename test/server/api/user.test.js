@@ -3,7 +3,7 @@ import supertest from 'supertest';
 import chai from 'chai';
 
 import testHelper from '../testHelper';
-import app from '../../../tools/devServer';
+import app from '../../../lib/devServer';
 
 const expect = chai.expect;
 const request = supertest.agent(app);
@@ -108,13 +108,13 @@ describe('User API:', () => {
 
     // GET requests - Retrieve all Users
     describe('GET: (/api/users) - ', () => {
-      it('should return users if token is valid and user is admin', (done) => {
+      it('should return users if user is admin', (done) => {
         request.get('/api/users')
           .set({ 'x-access-token': adminUserToken })
           .end((error, response) => {
             expect(response.status).to.equal(200);
-            expect(Array.isArray(response.body)).to.be.true;
-            expect(response.body.length).to.be.greaterThan(0);
+            expect(Array.isArray(response.body.users)).to.be.true;
+            expect(response.body.users.length).to.equal(4);
             done();
           });
       });
@@ -210,9 +210,10 @@ describe('User API:', () => {
           .set({ 'x-access-token': user.token })
           .send(fieldsToUpdate)
           .end((error, response) => {
+            const updatedUser = response.body.updatedUser;
             expect(response.status).to.equal(200);
-            expect(response.body.firstname).to.equal(fieldsToUpdate.firstname);
-            expect(response.body.lastname).to.equal(fieldsToUpdate.lastname);
+            expect(updatedUser.firstname).to.equal(fieldsToUpdate.firstname);
+            expect(updatedUser.lastname).to.equal(fieldsToUpdate.lastname);
             done();
           });
       });
@@ -222,14 +223,16 @@ describe('User API:', () => {
         const fieldsToUpdate = {
           firstname: 'Shalom',
           lastname: 'Ayidu',
-          password: 'IamShalom' };
+          password: 'IamShalom'
+        };
         request.put(`/api/users/${user.id}`)
           .set({ 'x-access-token': adminUserToken })
           .send(fieldsToUpdate)
           .end((error, response) => {
+            const updatedUser = response.body.updatedUser;
             expect(response.status).to.equal(200);
-            expect(response.body.firstname).to.equal(fieldsToUpdate.firstname);
-            expect(response.body.lastname).to.equal(fieldsToUpdate.lastname);
+            expect(updatedUser.firstname).to.equal(fieldsToUpdate.firstname);
+            expect(updatedUser.lastname).to.equal(fieldsToUpdate.lastname);
             done();
           });
       });
