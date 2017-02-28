@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+
 import chai from 'chai';
 import model from '../../../server/models';
 import testHelper from '../testHelper';
@@ -45,12 +47,12 @@ describe('User MODEL', () => {
 
     it('should create a user with a defined role', (done) => {
       model.User.findById(user.id, {
-          include: [model.Role]
-        })
-        .then((foundUser) => {
-          expect(foundUser.Role.title).to.equal(roleParams.title);
-          done();
-        });
+        include: [model.Role]
+      })
+      .then((foundUser) => {
+        expect(foundUser.Role.title).to.equal(roleParams.title);
+        done();
+      });
     });
   });
 });

@@ -68,7 +68,6 @@ const Authentication = {
     req.decoded.isAdmin = false;
     db.Role.findById(req.decoded.roleId)
       .then((role) => {
-
         if (role.title === 'admin') {
           req.decoded.isAdmin = true;
         }

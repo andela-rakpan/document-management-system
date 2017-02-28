@@ -2,4 +2,5 @@ coverage
 node_modules
 client
 server/routes
+server/config
 tools

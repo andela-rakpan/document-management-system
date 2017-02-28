@@ -118,7 +118,7 @@ describe('Document API:', () => {
             expect(response.status).to.equal(200);
             expect(Array.isArray(response.body.documents)).to.be.true;
             expect(response.body.documents.length).to.equal(4);
-            response.body.documents.forEach((document)=> {
+            response.body.documents.forEach((document) => {
               expect(document.access).to.equal('public');
             });
             done();
@@ -268,7 +268,7 @@ describe('Document API:', () => {
           });
       });
 
-      it('should not return user\'s documents if user is not owner',(done) => {
+      it('should not return user\'s documents if user is not owner', (done) => {
         request.get('/api/users/3/documents')
           .set({
             'x-access-token': regularUserToken
@@ -354,8 +354,8 @@ describe('Document API:', () => {
               .equal('You are not authorized to update this document');
             done();
           });
-
       });
+
       it('should edit document if user is owner',
       (done) => {
         request.put('/api/documents/2')

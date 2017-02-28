@@ -81,8 +81,8 @@ const usersController = {
               }
             });
           })
-          .catch(error => res.status(400).send({
-            message: 'An error occured. Ensure your parameters are valid!'  
+          .catch(() => res.status(400).send({
+            message: 'An error occured. Ensure your parameters are valid!'
           }));
       });
   },
@@ -114,7 +114,7 @@ const usersController = {
   retrieveUser(req, res) {
     db.User
       .findById(req.params.id, {
-        attributes : { exclude: ['password'] }
+        attributes: { exclude: ['password'] }
       })
       .then((user) => {
         if (!user) {
@@ -129,8 +129,8 @@ const usersController = {
             .send({ message: 'You can only retrieve your information!' });
         }
       })
-      .catch(error => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'  
+      .catch(() => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'
       }));
   },
 
@@ -152,7 +152,7 @@ const usersController = {
 
         if (req.decoded.isAdmin || req.decoded.userId === user.id) {
           const query = {
-            where: { ownerId: user.id}
+            where: { ownerId: user.id }
           };
           query.limit = (req.query.limit > 0) ? req.query.limit : 10;
           query.offset = (req.query.offset > 0) ? req.query.offset : 0;
@@ -168,8 +168,8 @@ const usersController = {
           });
         }
       })
-      .catch(error => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'  
+      .catch(() => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'
       }));
   },
 
@@ -203,9 +203,9 @@ const usersController = {
             .send({ message: 'You are not authorized to update this user' });
         }
       })
-     .catch(error => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'  
-      }));
+     .catch(() => res.status(400).send({
+       message: 'An error occured. Ensure your parameters are valid!'
+     }));
   },
 
    /**
@@ -235,8 +235,8 @@ const usersController = {
             message: 'User deleted successfully.',
           }));
       })
-      .catch(error => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'  
+      .catch(() => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'
       }));
   },
 };

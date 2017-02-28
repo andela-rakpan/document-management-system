@@ -17,7 +17,7 @@ const documentsController = {
         typeId: req.body.typeId,
       })
       .then(document => res.status(201).send(document))
-      .catch(error => res.status(400).send({
+      .catch(() => res.status(400).send({
         message: 'An error occured. Ensure your parameters are valid!'
       }));
   },
@@ -78,8 +78,8 @@ const documentsController = {
 
         res.status(200).send(document);
       })
-      .catch(error => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'  
+      .catch(() => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'
       }));
   },
 
@@ -108,13 +108,13 @@ const documentsController = {
 
         document
           .update(req.body, { fields: Object.keys(req.body) })
-          .then(updatedDocument => res.status(200).send({ 
+          .then(updatedDocument => res.status(200).send({
             message: 'Update successful!',
             updatedDocument
           }));
       })
-      .catch(error => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'  
+      .catch(() => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'
       }));
   },
 
@@ -147,8 +147,8 @@ const documentsController = {
             message: 'Document deleted successfully.',
           }));
       })
-      .catch(error => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'  
+      .catch(() => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'
       }));
   },
 
@@ -208,7 +208,7 @@ const documentsController = {
     db.Document
       .findAndCountAll(query)
       .then(documents => res.status(200).send({
-          documents: documents.rows, count: documents.count
+        documents: documents.rows, count: documents.count
       }));
   },
 };
