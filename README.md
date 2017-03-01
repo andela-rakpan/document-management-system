@@ -1,5 +1,5 @@
-[![Coverage Status](https://coveralls.io/repos/github/andela-rakpan/document-management-system/badge.svg?branch=develop)](https://coveralls.io/github/andela-rakpan/document-management-system?branch=develop)
 [![Build Status](https://travis-ci.org/andela-rakpan/document-management-system.svg?branch=develop)](https://travis-ci.org/andela-rakpan/document-management-system.svg?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/andela-rakpan/document-management-system/badge.svg?branch=develop)](https://coveralls.io/github/andela-rakpan/document-management-system?branch=develop)
 [![Code Climate](https://codeclimate.com/github/andela-rakpan/document-management-system/badges/gpa.svg)](https://codeclimate.com/github/andela-rakpan/document-management-system)
 
 # Document Management System
@@ -47,8 +47,7 @@ The following features make up the Document Management System API:
 - It allows only admin user to modify and delete types   
 
 ##### Search
-- It allows users to search `public` documents that belong to other users.
-- It allows users to search documents they own, be in `public` or `private`
+- It allows users to search `public` documents that belong to other users (as well as documents that belong to the user).
 - It allows admin to retrieve all documents that matches search term, be it `public` or `private`.
 
 ### **Installation Steps**
@@ -197,19 +196,13 @@ The following features make up the Document Management System API:
 - Set a admin user token in the authorization headers. 
 - A success message is returned.
 
-#### Search Endpoint
+#### Search Endpoint   
 
-##### _To SEARCH public documents_   
-- Make a **GET** request to `/api/search/documents/public` endpoint.  
-- Set a user token in the authorization headers.   
-- Send data with valid `term` query in the `URL`; for example, to search for public documents that contain 'andela', send `/api/search/documents/public?term=andela`. 
-- An array of documents matching the search term is returned.   
-
-##### _To SEARCH personal documents (public and private)_  
+##### _To SEARCH documents (public and private)_  
 - Make a **GET** request to `/api/search/documents` endpoint.  
 - Set a user token in the authorization headers.   
-- Send data with valid `term` query in the `URL`; for example, to search for personal documents that contain 'tia', send `/api/search/documents?term=tia`. 
-- An array of documents matching the search term is returned.   
+- Send data with valid `term` query in the `URL`; for example, to search for documents that contain 'tia', send `/api/search/documents?term=tia`. 
+- An array of `public` as well as personal documents matching the search term is returned.   
 
 
 #### _POSTMAN Collection_
