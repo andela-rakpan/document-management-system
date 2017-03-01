@@ -1,5 +1,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/andela-rakpan/document-management-system/badge.svg?branch=develop)](https://coveralls.io/github/andela-rakpan/document-management-system?branch=develop)
 [![Build Status](https://travis-ci.org/andela-rakpan/document-management-system.svg?branch=develop)](https://travis-ci.org/andela-rakpan/document-management-system.svg?branch=develop)
+[![Code Climate](https://codeclimate.com/github/andela-rakpan/document-management-system/badges/gpa.svg)](https://codeclimate.com/github/andela-rakpan/document-management-system)
 
 # Document Management System
 Document Management System is an API that manages documents with users, document types and user roles. Each document defines access rights; the document defines which roles can access it. Also, each document specifies the date it was published and the date updated. 
