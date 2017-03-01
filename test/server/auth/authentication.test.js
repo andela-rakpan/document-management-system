@@ -47,7 +47,7 @@ describe('Authentication:', () => {
       it('should not authentiacate a user if no token is provided', (done) => {
         request.get('/api/documents')
           .set({
-            'x-access-token': 'this-is-an-invalid-token'
+            Authorization: 'this-is-an-invalid-token'
           })
           .end((error, response) => {
             expect(response.status).to.equal(401);
@@ -60,7 +60,7 @@ describe('Authentication:', () => {
       it('should authenticate a user if valid token is provided', (done) => {
         request.get('/api/documents')
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -86,7 +86,7 @@ describe('Authentication:', () => {
       it('should not authentiacate an admin invalid is provided', (done) => {
         request.get('/api/users')
           .set({
-            'x-access-token': 'this-is-an-invalid-token'
+            Authorization: 'this-is-an-invalid-token'
           })
           .end((error, response) => {
             expect(response.status).to.equal(401);
@@ -99,7 +99,7 @@ describe('Authentication:', () => {
       it('should not authentiacate an admin if user is not admin', (done) => {
         request.get('/api/users')
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(403);
@@ -112,7 +112,7 @@ describe('Authentication:', () => {
       it('should authenticate an admin if user is admin', (done) => {
         request.get('/api/users')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);

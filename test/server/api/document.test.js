@@ -56,7 +56,7 @@ describe('Document API:', () => {
         request.post('/api/documents')
           .send(invalidDocument)
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(400);
@@ -69,7 +69,7 @@ describe('Document API:', () => {
         request.post('/api/documents')
           .send(privateDocument)
           .set({
-            'x-access-token': regularUserToken2
+            Authorization: regularUserToken2
           })
           .end((error, response) => {
             privateDoc = response.body;
@@ -84,7 +84,7 @@ describe('Document API:', () => {
         request.post('/api/documents')
           .send(publicDocument)
           .set({
-            'x-access-token': regularUserToken2
+            Authorization: regularUserToken2
           })
           .end((error, response) => {
             publicDoc = response.body;
@@ -98,7 +98,7 @@ describe('Document API:', () => {
         request.post('/api/documents')
           .send(privateDocument)
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(400);
@@ -112,7 +112,7 @@ describe('Document API:', () => {
       it('should return \'public\' documents if user is not admin', (done) => {
         request.get('/api/documents')
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -128,7 +128,7 @@ describe('Document API:', () => {
       it('should return all documents if user is admin', (done) => {
         request.get('/api/documents')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -144,7 +144,7 @@ describe('Document API:', () => {
       it('should not return the document if supplied invalid id', (done) => {
         request.get('/api/documents/12345')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(404);
@@ -156,7 +156,7 @@ describe('Document API:', () => {
       (done) => {
         request.get('/api/documents/id')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(400);
@@ -168,7 +168,7 @@ describe('Document API:', () => {
       + 'and user is not owner', (done) => {
         request.get(`/api/documents/${privateDoc.id}`)
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(403);
@@ -182,7 +182,7 @@ describe('Document API:', () => {
       + 'and user is not admin', (done) => {
         request.get(`/api/documents/${privateDoc.id}`)
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(403);
@@ -196,7 +196,7 @@ describe('Document API:', () => {
       (done) => {
         request.get(`/api/documents/${privateDoc.id}`)
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -207,7 +207,7 @@ describe('Document API:', () => {
       it('should return the document if user is owner', (done) => {
         request.get(`/api/documents/${privateDoc.id}`)
           .set({
-            'x-access-token': regularUserToken2
+            Authorization: regularUserToken2
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -219,7 +219,7 @@ describe('Document API:', () => {
       and user is not owner`, (done) => {
         request.get(`/api/documents/${publicDoc.id}`)
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -232,7 +232,7 @@ describe('Document API:', () => {
       and user is not admin`, (done) => {
         request.get(`/api/documents/${publicDoc.id}`)
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -248,7 +248,7 @@ describe('Document API:', () => {
       (done) => {
         request.get('/api/users/12345/documents')
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(404);
@@ -260,7 +260,7 @@ describe('Document API:', () => {
       (done) => {
         request.get('/api/users/id/documents')
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(400);
@@ -271,7 +271,7 @@ describe('Document API:', () => {
       it('should not return user\'s documents if user is not owner', (done) => {
         request.get('/api/users/3/documents')
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(403);
@@ -284,7 +284,7 @@ describe('Document API:', () => {
       it('should return user\'s documents if user is admin', (done) => {
         request.get(`/api/users/${regularUser.id}/documents`)
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -297,7 +297,7 @@ describe('Document API:', () => {
       it('should return user\'s documents if user is owner', (done) => {
         request.get(`/api/users/${regularUser.id}/documents`)
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -321,7 +321,7 @@ describe('Document API:', () => {
       it('should not edit document if invalid id is supplied', (done) => {
         request.put('/api/documents/12345')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(fieldsToUpdate)
           .end((error, response) => {
@@ -333,7 +333,7 @@ describe('Document API:', () => {
       it('should not edit document if supplied non-integer id', (done) => {
         request.put('/api/documents/id')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(fieldsToUpdate)
           .end((error, response) => {
@@ -345,7 +345,7 @@ describe('Document API:', () => {
       it('should not edit document if user is not owner', (done) => {
         request.put(`/api/documents/${privateDoc.id}`)
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .send(fieldsToUpdate)
           .end((error, response) => {
@@ -360,7 +360,7 @@ describe('Document API:', () => {
       (done) => {
         request.put('/api/documents/2')
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .send(fieldsToUpdate)
           .end((error, response) => {
@@ -377,7 +377,7 @@ describe('Document API:', () => {
         fieldsToUpdate.title = 'The Andela Bootcamp Experience';
         request.put('/api/documents/2')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(fieldsToUpdate)
           .end((error, response) => {
@@ -394,7 +394,7 @@ describe('Document API:', () => {
       it('should not delete document if invalid id is supplied', (done) => {
         request.delete('/api/documents/12345')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(404);
@@ -405,7 +405,7 @@ describe('Document API:', () => {
       it('should not delete document if supplied non-integer id', (done) => {
         request.delete('/api/documents/id')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(400);
@@ -416,7 +416,7 @@ describe('Document API:', () => {
       it('should not delete document if user is not owner', (done) => {
         request.delete(`/api/documents/${privateDoc.id}`)
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(403);
@@ -430,7 +430,7 @@ describe('Document API:', () => {
       (done) => {
         request.delete(`/api/documents/${privateDoc.id}`)
           .set({
-            'x-access-token': regularUserToken2
+            Authorization: regularUserToken2
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -444,7 +444,7 @@ describe('Document API:', () => {
       (done) => {
         request.delete('/api/documents/5')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);

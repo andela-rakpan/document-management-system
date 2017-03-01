@@ -42,7 +42,7 @@ describe('Search API:', () => {
       it('should not return document(s) if search term is empty', (done) => {
         request.get('/api/search/documents?term=')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(400);
@@ -55,7 +55,7 @@ describe('Search API:', () => {
       it('should return all matching document(s) if user is admin', (done) => {
         request.get(`/api/search/documents?term=${term}`)
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -69,7 +69,7 @@ describe('Search API:', () => {
       (done) => {
         request.get(`/api/search/documents?term=${term}`)
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);

@@ -42,7 +42,7 @@ describe('Type API:', () => {
         };
         request.post('/api/types')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(newType)
           .end((error, response) => {
@@ -57,7 +57,7 @@ describe('Type API:', () => {
         };
         request.post('/api/types')
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .send(newType)
           .end((error, response) => {
@@ -75,7 +75,7 @@ describe('Type API:', () => {
         };
         request.post('/api/types')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(newType)
           .end((error, response) => {
@@ -90,7 +90,7 @@ describe('Type API:', () => {
       it('should return types if token is valid', (done) => {
         request.get('/api/types')
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -106,7 +106,7 @@ describe('Type API:', () => {
       it('should not return the type if supplied invalid id', (done) => {
         request.get('/api/types/12345')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(404);
@@ -117,7 +117,7 @@ describe('Type API:', () => {
       it('should not return the type if supplied non-integer id', (done) => {
         request.get('/api/types/id')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(400);
@@ -129,7 +129,7 @@ describe('Type API:', () => {
       (done) => {
         request.get(`/api/types/${type.id}`)
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -146,7 +146,7 @@ describe('Type API:', () => {
         };
         request.put('/api/types/12345')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(fieldsToUpdate)
           .end((error, response) => {
@@ -161,7 +161,7 @@ describe('Type API:', () => {
         };
         request.put('/api/types/id')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(fieldsToUpdate)
           .end((error, response) => {
@@ -177,7 +177,7 @@ describe('Type API:', () => {
         };
         request.put(`/api/types/${type.id}`)
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(fieldsToUpdate)
           .end((error, response) => {
@@ -193,7 +193,7 @@ describe('Type API:', () => {
       it('should not delete type if invalid id is supplied', (done) => {
         request.delete('/api/types/12345')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(404);
@@ -204,7 +204,7 @@ describe('Type API:', () => {
       it('should not delete type if non-integer id is supplied', (done) => {
         request.delete('/api/types/id')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(400);
@@ -215,7 +215,7 @@ describe('Type API:', () => {
       it('should delete type when valid id is supplied', (done) => {
         request.delete(`/api/types/${type.id}`)
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);

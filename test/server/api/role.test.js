@@ -42,7 +42,7 @@ describe('Role API:', () => {
         };
         request.post('/api/roles')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(newRole)
           .end((error, response) => {
@@ -57,7 +57,7 @@ describe('Role API:', () => {
         };
         request.post('/api/roles')
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .send(newRole)
           .end((error, response) => {
@@ -73,7 +73,7 @@ describe('Role API:', () => {
         };
         request.post('/api/roles')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(newRole)
           .end((error, response) => {
@@ -91,7 +91,7 @@ describe('Role API:', () => {
         };
         request.post('/api/roles')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(newRole)
           .end((error, response) => {
@@ -106,7 +106,7 @@ describe('Role API:', () => {
       it('should not return roles if user is not admin', (done) => {
         request.get('/api/roles')
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(403);
@@ -117,7 +117,7 @@ describe('Role API:', () => {
       it('should return roles if token is valid and user is admin', (done) => {
         request.get('/api/roles')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -133,7 +133,7 @@ describe('Role API:', () => {
       it('should not return the role when supplied invalid id', (done) => {
         request.get('/api/roles/12345')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(404);
@@ -144,7 +144,7 @@ describe('Role API:', () => {
       it('should not return the role when supplied non-integer id', (done) => {
         request.get('/api/roles/id')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(400);
@@ -155,7 +155,7 @@ describe('Role API:', () => {
       it('should not return the role when user is not admin', (done) => {
         request.get(`/api/roles/${role.id}`)
           .set({
-            'x-access-token': regularUserToken
+            Authorization: regularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(403);
@@ -167,7 +167,7 @@ describe('Role API:', () => {
       (done) => {
         request.get(`/api/roles/${role.id}`)
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -184,7 +184,7 @@ describe('Role API:', () => {
         };
         request.put('/api/roles/12345')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(fieldsToUpdate)
           .end((error, response) => {
@@ -199,7 +199,7 @@ describe('Role API:', () => {
         };
         request.put('/api/roles/id')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(fieldsToUpdate)
           .end((error, response) => {
@@ -215,7 +215,7 @@ describe('Role API:', () => {
         };
         request.put(`/api/roles/${role.id}`)
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .send(fieldsToUpdate)
           .end((error, response) => {
@@ -231,7 +231,7 @@ describe('Role API:', () => {
       it('should not delete role if invalid id is supplied', (done) => {
         request.delete('/api/roles/12345')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(404);
@@ -242,7 +242,7 @@ describe('Role API:', () => {
       it('should not delete role if non-integer id is supplied', (done) => {
         request.delete('/api/roles/id')
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(400);
@@ -253,7 +253,7 @@ describe('Role API:', () => {
       it('should delete role when valid id is supplied', (done) => {
         request.delete(`/api/roles/${role.id}`)
           .set({
-            'x-access-token': adminUserToken
+            Authorization: adminUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
