@@ -3,18 +3,18 @@
 import supertest from 'supertest';
 import chai from 'chai';
 
-import testHelper from '../testHelper';
+import TestHelper from '../TestHelper';
 import app from '../../../lib/devServer';
 
 const expect = chai.expect;
 const request = supertest.agent(app);
 
-const adminUser = testHelper.testUser1;
-const regularUser = testHelper.testUser2;
-const regularUser2 = testHelper.testUser4;
-const invalidDocument = testHelper.invalidDocument;
-const privateDocument = testHelper.testDocument4;
-const publicDocument = testHelper.testDocument5;
+const adminUser = TestHelper.testUser1;
+const regularUser = TestHelper.testUser2;
+const regularUser2 = TestHelper.testUser4;
+const invalidDocument = TestHelper.invalidDocument;
+const privateDocument = TestHelper.testDocument4;
+const publicDocument = TestHelper.testDocument5;
 
 describe('Document API:', () => {
   let adminUserToken;
