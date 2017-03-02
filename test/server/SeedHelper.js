@@ -2,11 +2,11 @@ import bcrypt from 'bcrypt-nodejs';
 import logger from 'fm-log';
 
 import model from '../../server/models';
-import testHelper from './testHelper';
+import TestHelper from './TestHelper';
 
-const adminUser = testHelper.testUser1;
-const regularUser1 = testHelper.testUser2;
-const regularUser2 = testHelper.testUser4;
+const adminUser = TestHelper.testUser1;
+const regularUser1 = TestHelper.testUser2;
+const regularUser2 = TestHelper.testUser4;
 /**
  * SeedData class to populate database with default data
  */
@@ -55,7 +55,7 @@ class SeedHelper {
    * @returns {object} - A Promise object
    */
   static populateRoleTable() {
-    const roles = [testHelper.adminRole, testHelper.regularRole];
+    const roles = [TestHelper.adminRole, TestHelper.regularRole];
     return model.Role.bulkCreate(roles);
   }
 
@@ -86,8 +86,8 @@ class SeedHelper {
    */
   static populateTypeTable() {
     const types = [
-      testHelper.testType1,
-      testHelper.testType2
+      TestHelper.testType1,
+      TestHelper.testType2
     ];
     return model.Type.bulkCreate(types);
   }
@@ -98,11 +98,11 @@ class SeedHelper {
    */
   static populateDocumentTable() {
     const documents = [
-      testHelper.testDocument1,
-      testHelper.testDocument2,
-      testHelper.testDocument3,
-      testHelper.testDocument6,
-      testHelper.testDocument7
+      TestHelper.testDocument1,
+      TestHelper.testDocument2,
+      TestHelper.testDocument3,
+      TestHelper.testDocument6,
+      TestHelper.testDocument7
     ];
     return model.Document.bulkCreate(documents);
   }
