@@ -4,12 +4,12 @@ import supertest from 'supertest';
 import chai from 'chai';
 
 import app from '../../../lib/devServer';
-import testHelper from '../testHelper';
+import TestHelper from '../TestHelper';
 
 const expect = chai.expect;
 const request = supertest.agent(app);
-const adminUser = testHelper.testUser1;
-const regularUser = testHelper.testUser2;
+const adminUser = TestHelper.testUser1;
+const regularUser = TestHelper.testUser2;
 
 describe('Role API:', () => {
   let adminUserToken;
