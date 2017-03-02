@@ -1,6 +1,6 @@
 import db from '../models';
 
-const documentsController = {
+const DocumentsController = {
   /**
    * Create a new Document
    * @param {Object} req - Request object
@@ -213,4 +213,4 @@ const documentsController = {
   },
 };
 
-export default documentsController;
+export default DocumentsController;
