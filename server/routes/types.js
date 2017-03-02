@@ -1,17 +1,17 @@
-import typesController from '../controllers/types';
-import Authentication from '../middlewares/authentication';
+import TypesController from '../controllers/TypesController';
+import Authentication from '../middlewares/Authentication';
 
-const typesRoute = (router) => {
+const TypesRoute = (router) => {
   // Create a new type or get all types
   router.route('/types')
-   .post(Authentication.verifyToken, typesController.create)
-   .get(Authentication.verifyToken, typesController.list);
+   .post(Authentication.verifyToken, TypesController.create)
+   .get(Authentication.verifyToken, TypesController.list);
 
   // Get, update and delete a particular type
   router.route('/types/:id')
-    .get(Authentication.verifyToken, typesController.retrieve)
-    .put(Authentication.verifyToken, Authentication.verifyAdmin, typesController.update)
-    .delete(Authentication.verifyToken, Authentication.verifyAdmin, typesController.delete);
+    .get(Authentication.verifyToken, TypesController.retrieve)
+    .put(Authentication.verifyToken, Authentication.verifyAdmin, TypesController.update)
+    .delete(Authentication.verifyToken, Authentication.verifyAdmin, TypesController.delete);
 };
 
-export default typesRoute;
+export default TypesRoute;
