@@ -1,6 +1,6 @@
 import db from '../models';
 
-const typesController = {
+const TypesController = {
    /**
    * Create a new Type
    * @param {Object} req Request object
@@ -110,4 +110,4 @@ const typesController = {
   },
 };
 
-export default typesController;
+export default TypesController;
