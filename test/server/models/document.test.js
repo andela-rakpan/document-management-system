@@ -5,7 +5,7 @@ import model from '../../../server/models';
 import TestHelper from '../TestHelper';
 
 const expect = chai.expect;
-const documentParams = testHelper.testDocument8;
+const documentParams = TestHelper.testDocument8;
 
 const requiredFields = ['title', 'content', 'ownerId', 'access'];
 
