@@ -6,7 +6,7 @@ import db from '../models';
  */
 const secret = process.env.SECRET || 'my secret key';
 
-const usersController = {
+const UsersController = {
   /**
    * Login a user
    * @param {Object} req - Request object
@@ -241,4 +241,4 @@ const usersController = {
   },
 };
 
-export default usersController;
+export default UsersController;
