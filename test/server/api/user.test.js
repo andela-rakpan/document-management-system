@@ -2,15 +2,15 @@
 import supertest from 'supertest';
 import chai from 'chai';
 
-import testHelper from '../testHelper';
+import TestHelper from '../TestHelper';
 import app from '../../../lib/devServer';
 
 const expect = chai.expect;
 const request = supertest.agent(app);
-const adminUser = testHelper.testUser1;
-const regularUser = testHelper.testUser2;
-const invalidUser = testHelper.invalidUser;
-const regularUser2 = testHelper.testUser3;
+const adminUser = TestHelper.testUser1;
+const regularUser = TestHelper.testUser2;
+const invalidUser = TestHelper.invalidUser;
+const regularUser2 = TestHelper.testUser3;
 
 describe('User API:', () => {
   let adminUserToken;
