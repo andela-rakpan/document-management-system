@@ -2,10 +2,10 @@
 
 import chai from 'chai';
 import model from '../../../server/models';
-import testHelper from '../testHelper';
+import TestHelper from '../TestHelper';
 
 const expect = chai.expect;
-const roleParams = testHelper.roleParams;
+const roleParams = TestHelper.roleParams;
 
 describe('Role MODEL:', () => {
   describe('Create Role:', () => {
