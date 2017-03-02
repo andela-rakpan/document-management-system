@@ -2,11 +2,11 @@
 
 import chai from 'chai';
 import model from '../../../server/models';
-import testHelper from '../testHelper';
+import TestHelper from '../TestHelper';
 
 const expect = chai.expect;
-const userParams = testHelper.testUser3;
-const roleParams = testHelper.regularRole;
+const userParams = TestHelper.testUser3;
+const roleParams = TestHelper.regularRole;
 
 const requiredFields = ['firstname', 'lastname', 'email',
   'password', 'roleId'
