@@ -1,6 +1,6 @@
 import db from '../models';
 
-const rolesController = {
+const RolesController = {
   /**
    * Create a new Role
    * @param {Object} req - Request object
@@ -112,4 +112,4 @@ const rolesController = {
   },
 };
 
-export default rolesController;
+export default RolesController;
