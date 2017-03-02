@@ -73,6 +73,72 @@ const Authentication = {
         }
         next();
       });
+  },
+
+  /**
+   * checkDocumentOwner - Verifies if the user is owner of the document
+   *
+   * @param  {Object} req  Request Object
+   * @param  {Object} res  Response Object
+   * @param  {Object} next
+   * @returns {Object} Response Object
+   */
+  checkDocumentOwner(req, res, next) {
+    req.decoded.document = {};
+    db.Document
+      .findById(req.params.id)
+      .then((document) => {
+        if (!document) {
+          return res.status(404).send({
+            message: 'Document Not Found',
+          });
+        }
+
+        if (!req.decoded.isAdmin && document.access === 'private' &&
+        !(req.decoded.userId === document.ownerId)) {
+          return res.status(403)
+            .send({ message: 'You are not authorized to access this document' });
+        }
+        req.decoded.document = document;
+        next();
+      })
+      .catch(() => res.status(400).send({
+        message: 'An error occured. Ensure your parameters are valid!'
+      }));
+  }
+  ,
+
+  /**
+   * checkCurrentUser - Verifies if the user id is current user
+   *
+   * @param  {Object} req  Request Object
+   * @param  {Object} res  Response Object
+   * @param  {Object} next
+   * @returns {Object} Response Object
+   */
+  checkCurrentUser(req, res, next) {
+    req.decoded.user = {};
+    db.User
+      .findById(req.params.id, {
+        attributes: { exclude: ['password'] }
+      })
+      .then((user) => {
+        if (!user) {
+          return res.status(404).send({
+            message: 'User Not Found',
+          });
+        }
+
+        if (!req.decoded.isAdmin && !(req.decoded.userId === user.id)) {
+          return res.status(403)
+            .send({ message: 'You are not authorized to access this user' });
+        }
+        req.decoded.user = user;
+        next();
+      })
+     .catch(() => res.status(400).send({
+       message: 'An error occured. Ensure your parameters are valid!'
+     }));
   }
 };
 

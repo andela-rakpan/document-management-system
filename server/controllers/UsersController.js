@@ -112,26 +112,7 @@ const UsersController = {
    * @returns {Object} Response object
    */
   retrieveUser(req, res) {
-    db.User
-      .findById(req.params.id, {
-        attributes: { exclude: ['password'] }
-      })
-      .then((user) => {
-        if (!user) {
-          return res.status(404).send({
-            message: 'User Not Found',
-          });
-        }
-        if (req.decoded.isAdmin || req.decoded.userId === user.id) {
-          res.status(200).send(user);
-        } else {
-          res.status(403)
-            .send({ message: 'You can only retrieve your information!' });
-        }
-      })
-      .catch(() => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'
-      }));
+    res.status(200).send(req.decoded.user);
   },
 
    /**
@@ -141,35 +122,16 @@ const UsersController = {
    * @returns {Object} Response object
    */
   retrieveDocuments(req, res) {
-    db.User
-      .findById(req.params.id)
-      .then((user) => {
-        if (!user) {
-          return res.status(404).send({
-            message: 'User Not Found',
-          });
-        }
-
-        if (req.decoded.isAdmin || req.decoded.userId === user.id) {
-          const query = {
-            where: { ownerId: user.id }
-          };
-          query.limit = (req.query.limit > 0) ? req.query.limit : 10;
-          query.offset = (req.query.offset > 0) ? req.query.offset : 0;
-          db.Document
-            .findAndCountAll(query)
-            .then(documents => res.status(200).send({
-              documents: documents.rows,
-              count: documents.count
-            }));
-        } else {
-          res.status(403).send({
-            message: 'You are not authorized to access this document(s)'
-          });
-        }
-      })
-      .catch(() => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'
+    const query = {
+      where: { ownerId: req.decoded.user.id }
+    };
+    query.limit = (req.query.limit > 0) ? req.query.limit : 10;
+    query.offset = (req.query.offset > 0) ? req.query.offset : 0;
+    db.Document
+      .findAndCountAll(query)
+      .then(documents => res.status(200).send({
+        documents: documents.rows,
+        count: documents.count
       }));
   },
 
@@ -180,32 +142,25 @@ const UsersController = {
    * @returns {Object} Response object
    */
   updateUser(req, res) {
-    db.User
-      .findById(req.params.id, {
-        attributes: { exclude: ['password'] }
-      })
-      .then((user) => {
-        if (!user) {
-          return res.status(404).send({
-            message: 'User Not Found',
-          });
-        }
+    // Prevent update on user id property
+    if (req.body.id) {
+      return res.status(400).send({
+        message: 'You cannot edit user id property'
+      });
+    }
+    // Prevent non-admin from updating role of a user
+    if (!req.decoded.isAdmin && req.body.roleId) {
+      return res.status(400).send({
+        message: 'You cannot edit user roleId property'
+      });
+    }
 
-        if (req.decoded.isAdmin || req.decoded.userId === user.id) {
-          user
-            .update(req.body, { fields: Object.keys(req.body) })
-            .then(updatedUser => res.status(200).send({
-              message: 'User updated successfully',
-              updatedUser
-            }));
-        } else {
-          res.status(403)
-            .send({ message: 'You are not authorized to update this user' });
-        }
-      })
-     .catch(() => res.status(400).send({
-       message: 'An error occured. Ensure your parameters are valid!'
-     }));
+    req.decoded.user
+      .update(req.body, { fields: Object.keys(req.body) })
+      .then(updatedUser => res.status(200).send({
+        message: 'User updated successfully',
+        updatedUser
+      }));
   },
 
    /**
@@ -241,4 +196,4 @@ const UsersController = {
   },
 };
 
-export default UsersController;
+export default UsersController

@@ -218,12 +218,55 @@ describe('User API:', () => {
           });
       });
 
+      it('should not edit user\'s roleId if user is not admin', (done) => {
+        const fieldsToUpdate = { roleId: 1};
+        request.put(`/api/users/${user.id}`)
+          .set({ Authorization: user.token })
+          .send(fieldsToUpdate)
+          .end((error, response) => {
+            const updatedUser = response.body.updatedUser;
+            expect(response.status).to.equal(400);
+            expect(response.body.message).to
+              .equal('You cannot edit user roleId property');
+            done();
+          });
+      });
+
+      it('should not edit user\'s roleId if user is not admin', (done) => {
+        const fieldsToUpdate = { roleId: 1};
+        request.put(`/api/users/${user.id}`)
+          .set({ Authorization: user.token })
+          .send(fieldsToUpdate)
+          .end((error, response) => {
+            const updatedUser = response.body.updatedUser;
+            expect(response.status).to.equal(400);
+            expect(response.body.message).to
+              .equal('You cannot edit user roleId property');
+            done();
+          });
+      });
+
+      it('should not edit user\'s id property', (done) => {
+        const fieldsToUpdate = { id: 5};
+        request.put(`/api/users/${user.id}`)
+          .set({ Authorization: adminUserToken })
+          .send(fieldsToUpdate)
+          .end((error, response) => {
+            const updatedUser = response.body.updatedUser;
+            expect(response.status).to.equal(400);
+            expect(response.body.message).to
+              .equal('You cannot edit user id property');
+            done();
+          });
+      });
+
       it('should perform edit when valid id is supplied and user is admin',
       (done) => {
         const fieldsToUpdate = {
           firstname: 'Shalom',
           lastname: 'Ayidu',
-          password: 'IamShalom'
+          password: 'IamShalom',
+          roleId: 1
         };
         request.put(`/api/users/${user.id}`)
           .set({ Authorization: adminUserToken })
@@ -233,6 +276,7 @@ describe('User API:', () => {
             expect(response.status).to.equal(200);
             expect(updatedUser.firstname).to.equal(fieldsToUpdate.firstname);
             expect(updatedUser.lastname).to.equal(fieldsToUpdate.lastname);
+            expect(updatedUser.roleId).to.equal(fieldsToUpdate.roleId);
             done();
           });
       });

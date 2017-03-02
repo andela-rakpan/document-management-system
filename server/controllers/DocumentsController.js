@@ -57,30 +57,7 @@ const DocumentsController = {
    * @returns {Object} Response object
    */
   retrieve(req, res) {
-    db.Document
-      .findById(req.params.id)
-      .then((document) => {
-        if (!document) {
-          return res.status(404).send({
-            message: 'Document Not Found',
-          });
-        }
-
-        if (req.decoded.isAdmin) {
-          return res.status(200).send(document);
-        }
-
-        if (document.access === 'private' &&
-        !(req.decoded.userId === document.ownerId)) {
-          return res.status(403)
-            .send({ message: 'This is a private document' });
-        }
-
-        res.status(200).send(document);
-      })
-      .catch(() => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'
-      }));
+    res.status(200).send(req.decoded.document);
   },
 
   /**
@@ -90,31 +67,17 @@ const DocumentsController = {
    * @returns {Object} Response object
    */
   update(req, res) {
-    db.Document
-      .findById(req.params.id)
-      .then((document) => {
-        if (!document) {
-          return res.status(404).send({
-            message: 'Document Not Found',
-          });
-        }
-
-        if (!req.decoded.isAdmin &&
-          !(req.decoded.userId === document.ownerId)) {
-          return res.status(403).send({
-            message: 'You are not authorized to update this document'
-          });
-        }
-
-        document
-          .update(req.body, { fields: Object.keys(req.body) })
-          .then(updatedDocument => res.status(200).send({
-            message: 'Update successful!',
-            updatedDocument
-          }));
-      })
-      .catch(() => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'
+    // Ensure that the onwerId property is not updated!
+    if (req.body.ownerId && !req.decoded.isAdmin) {
+      return res.status(400).send({
+        message: 'You cannot edit document ownerId property'
+      });
+    }
+    req.decoded.document
+      .update(req.body, { fields: Object.keys(req.body) })
+      .then(updatedDocument => res.status(200).send({
+        message: 'Update successful!',
+        updatedDocument
       }));
   },
 
@@ -125,30 +88,10 @@ const DocumentsController = {
    * @returns {Object} Response object
    */
   delete(req, res) {
-    db.Document
-      .findById(req.params.id)
-      .then((document) => {
-        if (!document) {
-          return res.status(404).send({
-            message: 'This document does not exist',
-          });
-        }
-
-        if (!req.decoded.isAdmin &&
-        !(req.decoded.userId === document.ownerId)) {
-          return res.status(403).send({
-            message: 'You are not authorized to delete this document'
-          });
-        }
-
-        document
-          .destroy()
-          .then(() => res.status(200).send({
-            message: 'Document deleted successfully.',
-          }));
-      })
-      .catch(() => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'
+    req.decoded.document
+      .destroy()
+      .then(() => res.status(200).send({
+        message: 'Document deleted successfully.',
       }));
   },
 

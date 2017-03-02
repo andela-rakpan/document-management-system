@@ -173,7 +173,7 @@ describe('Document API:', () => {
           .end((error, response) => {
             expect(response.status).to.equal(403);
             expect(response.body.message).to
-              .equal('This is a private document');
+              .equal('You are not authorized to access this document');
             done();
           });
       });
@@ -187,7 +187,7 @@ describe('Document API:', () => {
           .end((error, response) => {
             expect(response.status).to.equal(403);
             expect(response.body.message).to
-              .equal('This is a private document');
+              .equal('You are not authorized to access this document');
             done();
           });
       });
@@ -276,7 +276,7 @@ describe('Document API:', () => {
           .end((error, response) => {
             expect(response.status).to.equal(403);
             expect(response.body.message).to
-              .equal('You are not authorized to access this document(s)');
+              .equal('You are not authorized to access this user');
             done();
           });
       });
@@ -351,7 +351,7 @@ describe('Document API:', () => {
           .end((error, response) => {
             expect(response.status).to.equal(403);
             expect(response.body.message).to
-              .equal('You are not authorized to update this document');
+              .equal('You are not authorized to access this document');
             done();
           });
       });
@@ -368,6 +368,22 @@ describe('Document API:', () => {
             expect(response.status).to.equal(200);
             expect(updatedDocument.title).to.equal(fieldsToUpdate.title);
             expect(updatedDocument.content).to.equal(fieldsToUpdate.content);
+            done();
+          });
+      });
+
+      it('should not edit document ownerId property if user is not admin',
+      (done) => {
+        fieldsToUpdate.ownerId = 3;
+        request.put('/api/documents/2')
+          .set({
+            Authorization: regularUserToken
+          })
+          .send(fieldsToUpdate)
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
+            expect(response.body.message).to
+              .equal('You cannot edit document ownerId property');
             done();
           });
       });
@@ -421,7 +437,7 @@ describe('Document API:', () => {
           .end((error, response) => {
             expect(response.status).to.equal(403);
             expect(response.body.message).to
-              .equal('You are not authorized to delete this document');
+              .equal('You are not authorized to access this document');
             done();
           });
       });
