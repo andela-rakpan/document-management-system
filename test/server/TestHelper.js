@@ -1,6 +1,6 @@
 import faker from 'faker';
 
-const testHelper = {
+const TestHelper = {
   adminRole: {
     title: 'admin'
   },
@@ -162,4 +162,4 @@ const testHelper = {
   },
 };
 
-export default testHelper;
+export default TestHelper;
