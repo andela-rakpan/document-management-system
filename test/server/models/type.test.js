@@ -2,10 +2,10 @@
 
 import chai from 'chai';
 import model from '../../../server/models';
-import testHelper from '../testHelper';
+import TestHelper from '../TestHelper';
 
 const expect = chai.expect;
-const typeParams = testHelper.testType3;
+const typeParams = TestHelper.testType3;
 
 describe('Type MODEL:', () => {
   describe('Create Type:', () => {
