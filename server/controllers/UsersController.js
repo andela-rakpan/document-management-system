@@ -1,19 +1,20 @@
 import jwt from 'jsonwebtoken';
 import db from '../models';
 
-/**
- * Secret token for jsonwebtoken
- */
+
 const secret = process.env.SECRET || 'my secret key';
 
-const UsersController = {
+/**
+ * UsersController class to create and manage users
+ */
+class UsersController {
   /**
    * Login a user
    * @param {Object} req - Request object
    * @param {Object} res - Response object
    * @returns {Object} Response object
    */
-  login(req, res) {
+  static login(req, res) {
     const query = {
       where: { email: req.body.email }
     };
@@ -32,7 +33,7 @@ const UsersController = {
         res.status(401)
             .send({ message: 'Invalid Login Details!' });
       });
-  },
+  }
 
    /**
    * Logout a user
@@ -40,10 +41,10 @@ const UsersController = {
    * @param {Object} res - Response object
    * @returns {Object} Response object
    */
-  logout(req, res) {
+  static logout(req, res) {
     res.status(200)
       .send({ message: 'Successfully logged out!' });
-  },
+  }
 
  /**
    * Create a user
@@ -51,7 +52,7 @@ const UsersController = {
    * @param {Object} res - Response object
    * @returns {Object} Response object
    */
-  create(req, res) {
+  static create(req, res) {
     db.User.findOne({ where: { email: req.body.email } })
       .then((existingUser) => {
         if (existingUser) {
@@ -85,7 +86,7 @@ const UsersController = {
             message: 'An error occured. Ensure your parameters are valid!'
           }));
       });
-  },
+  }
 
    /**
    * List all users
@@ -93,7 +94,7 @@ const UsersController = {
    * @param {Object} res - Response object
    * @returns {Object} Response object
    */
-  list(req, res) {
+  static list(req, res) {
     const query = {};
     query.limit = (req.query.limit > 0) ? req.query.limit : 10;
     query.offset = (req.query.offset > 0) ? req.query.offset : 0;
@@ -103,7 +104,7 @@ const UsersController = {
       .then(users => res.status(200).send({
         users: users.rows, count: users.count
       }));
-  },
+  }
 
    /**
    * Retrive a user's details
@@ -111,9 +112,9 @@ const UsersController = {
    * @param {Object} res - Response object
    * @returns {Object} Response object
    */
-  retrieveUser(req, res) {
+  static retrieveUser(req, res) {
     res.status(200).send(req.decoded.user);
-  },
+  }
 
    /**
    * Retrieve a user's details with documents owned by the user
@@ -121,7 +122,7 @@ const UsersController = {
    * @param {Object} res - Response object
    * @returns {Object} Response object
    */
-  retrieveDocuments(req, res) {
+  static retrieveDocuments(req, res) {
     const query = {
       where: { ownerId: req.decoded.user.id }
     };
@@ -133,7 +134,7 @@ const UsersController = {
         documents: documents.rows,
         count: documents.count
       }));
-  },
+  }
 
    /**
    * Update a user
@@ -141,7 +142,7 @@ const UsersController = {
    * @param {Object} res - Response object
    * @returns {Object} Response object
    */
-  updateUser(req, res) {
+  static updateUser(req, res) {
     // Prevent update on user id property
     if (req.body.id) {
       return res.status(400).send({
@@ -161,7 +162,7 @@ const UsersController = {
         message: 'User updated successfully',
         updatedUser
       }));
-  },
+  }
 
    /**
    * Delete a user
@@ -169,7 +170,7 @@ const UsersController = {
    * @param {Object} res - Response object
    * @returns {Object} Response object
    */
-  deleteUser(req, res) {
+  static deleteUser(req, res) {
     db.User
       .findById(req.params.id)
       .then((user) => {
@@ -193,7 +194,7 @@ const UsersController = {
       .catch(() => res.status(400).send({
         message: 'An error occured. Ensure your parameters are valid!'
       }));
-  },
-};
+  }
+}
 
-export default UsersController
+export default UsersController;

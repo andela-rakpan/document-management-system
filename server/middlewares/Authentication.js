@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken';
 import db from '../models';
 
-/**
- * Secret token for jsonwebtoken
- */
 const secret = process.env.SECRET || 'my secret key';
 
-const Authentication = {
+/**
+ * Authentication class to authenticate users
+ */
+class Authentication {
 
   /**
    * verifyToken - Verifies if a token supplied is valid or not
@@ -16,7 +16,7 @@ const Authentication = {
    * @param  {Object} next
    * @returns {Object} Response Status
    */
-  verifyToken(req, res, next) {
+  static verifyToken(req, res, next) {
     const token = req.headers.authorization || req.headers['x-access-token'];
     if (!token) {
       return res.status(401).send({
@@ -33,7 +33,7 @@ const Authentication = {
       req.decoded = decoded;
       next();
     });
-  },
+  }
 
   /**
    * verifyAdmin - Verifies that the user role supplied is an admin
@@ -43,7 +43,7 @@ const Authentication = {
    * @param  {Object} next
    * @returns {Object} Response Object
    */
-  verifyAdmin(req, res, next) {
+  static verifyAdmin(req, res, next) {
     db.Role.findById(req.decoded.roleId)
       .then((role) => {
         if (role.title === 'admin') {
@@ -54,7 +54,7 @@ const Authentication = {
           });
         }
       });
-  },
+  }
 
   /**
    * isAdmin - Verifies if the user is an admin or not
@@ -64,7 +64,7 @@ const Authentication = {
    * @param  {Object} next
    * @returns {Object} Response Object
    */
-  isAdmin(req, res, next) {
+  static isAdmin(req, res, next) {
     req.decoded.isAdmin = false;
     db.Role.findById(req.decoded.roleId)
       .then((role) => {
@@ -73,7 +73,7 @@ const Authentication = {
         }
         next();
       });
-  },
+  }
 
   /**
    * checkDocumentOwner - Verifies if the user is owner of the document
@@ -83,7 +83,7 @@ const Authentication = {
    * @param  {Object} next
    * @returns {Object} Response Object
    */
-  checkDocumentOwner(req, res, next) {
+  static checkDocumentOwner(req, res, next) {
     req.decoded.document = {};
     db.Document
       .findById(req.params.id)
@@ -106,7 +106,6 @@ const Authentication = {
         message: 'An error occured. Ensure your parameters are valid!'
       }));
   }
-  ,
 
   /**
    * checkCurrentUser - Verifies if the user id is current user
@@ -116,7 +115,7 @@ const Authentication = {
    * @param  {Object} next
    * @returns {Object} Response Object
    */
-  checkCurrentUser(req, res, next) {
+  static checkCurrentUser(req, res, next) {
     req.decoded.user = {};
     db.User
       .findById(req.params.id, {
@@ -140,6 +139,6 @@ const Authentication = {
        message: 'An error occured. Ensure your parameters are valid!'
      }));
   }
-};
+}
 
 export default Authentication;

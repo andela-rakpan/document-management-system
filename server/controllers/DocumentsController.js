@@ -1,13 +1,16 @@
 import db from '../models';
 
-const DocumentsController = {
+/**
+ * DocumentsController class to create and manage documents
+ */
+class DocumentsController {
   /**
    * Create a new Document
    * @param {Object} req - Request object
    * @param {Object} res - Response object
    * @returns {Object} Response object
    */
-  create(req, res) {
+  static create(req, res) {
     db.Document
       .create({
         title: req.body.title,
@@ -20,7 +23,7 @@ const DocumentsController = {
       .catch(() => res.status(400).send({
         message: 'An error occured. Ensure your parameters are valid!'
       }));
-  },
+  }
 
   /**
    * List all Documents
@@ -28,7 +31,7 @@ const DocumentsController = {
    * @param {Object} res - Response object
    * @returns {Object} Response object
    */
-  listAll(req, res) {
+  static listAll(req, res) {
     let query = {};
     query.limit = (req.query.limit > 0) ? req.query.limit : 10;
     query.offset = (req.query.offset > 0) ? req.query.offset : 0;
@@ -48,7 +51,7 @@ const DocumentsController = {
           documents: documents.rows, count: documents.count
         }));
     }
-  },
+  }
 
   /**
    * Retrieve a specific document based on the id
@@ -56,9 +59,9 @@ const DocumentsController = {
    * @param {Object} res - Response object
    * @returns {Object} Response object
    */
-  retrieve(req, res) {
+  static retrieve(req, res) {
     res.status(200).send(req.decoded.document);
-  },
+  }
 
   /**
    * Update a document based on the id
@@ -66,7 +69,7 @@ const DocumentsController = {
    * @param {Object} res - Response object
    * @returns {Object} Response object
    */
-  update(req, res) {
+  static update(req, res) {
     // Ensure that the onwerId property is not updated!
     if (req.body.ownerId && !req.decoded.isAdmin) {
       return res.status(400).send({
@@ -79,7 +82,7 @@ const DocumentsController = {
         message: 'Update successful!',
         updatedDocument
       }));
-  },
+  }
 
   /**
    * Delete a particular Document
@@ -87,13 +90,13 @@ const DocumentsController = {
    * @param {Object} res - Response object
    * @returns {Object} Response object
    */
-  delete(req, res) {
+  static delete(req, res) {
     req.decoded.document
       .destroy()
       .then(() => res.status(200).send({
         message: 'Document deleted successfully.',
       }));
-  },
+  }
 
   /**
    * Gets all public documents relevant to search term
@@ -101,7 +104,7 @@ const DocumentsController = {
    * @param {Object} res Response object
    * @returns {Object} - Returns response object
    */
-  search(req, res) {
+  static search(req, res) {
     const term = req.query.term;
 
     if (term === '') {
@@ -153,7 +156,7 @@ const DocumentsController = {
       .then(documents => res.status(200).send({
         documents: documents.rows, count: documents.count
       }));
-  },
-};
+  }
+}
 
 export default DocumentsController;

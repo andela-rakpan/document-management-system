@@ -1,13 +1,16 @@
 import db from '../models';
 
-const TypesController = {
+/**
+ * TypesController class to create and manage document types
+ */
+class TypesController {
    /**
    * Create a new Type
    * @param {Object} req Request object
    * @param {Object} res Response object
    * @returns {Object} Response object
    */
-  create(req, res) {
+  static create(req, res) {
     db.Type
       .create({
         title: req.body.title
@@ -16,7 +19,7 @@ const TypesController = {
       .catch(() => res.status(400).send({
         message: 'An error occured. Ensure your parameters are valid!'
       }));
-  },
+  }
 
   /**
    * List all Types
@@ -24,7 +27,7 @@ const TypesController = {
    * @param {Object} res Response object
    * @returns {Object} Response object
    */
-  list(req, res) {
+  static list(req, res) {
     const query = {};
     query.limit = (req.query.limit > 0) ? req.query.limit : 10;
     query.offset = (req.query.offset > 0) ? req.query.offset : 0;
@@ -33,7 +36,7 @@ const TypesController = {
       .then(types => res.status(200).send({
         types: types.rows, count: types.count
       }));
-  },
+  }
 
   /**
    * Retrieve a Type based on specified id with associated documents
@@ -41,7 +44,7 @@ const TypesController = {
    * @param {Object} res Response object
    * @returns {Object} Response object
    */
-  retrieve(req, res) {
+  static retrieve(req, res) {
     db.Type
       .findById(req.params.id)
       .then((type) => {
@@ -55,7 +58,7 @@ const TypesController = {
       .catch(() => res.status(400).send({
         message: 'An error occured. Ensure your parameters are valid!'
       }));
-  },
+  }
 
   /**
    * Update a Type based on supplied id
@@ -63,7 +66,7 @@ const TypesController = {
    * @param {Object} res Response object
    * @returns {Object} Response object
    */
-  update(req, res) {
+  static update(req, res) {
     db.Type
       .findById(req.params.id)
       .then((type) => {
@@ -80,7 +83,7 @@ const TypesController = {
       .catch(() => res.status(400).send({
         message: 'An error occured. Ensure your parameters are valid!'
       }));
-  },
+  }
 
   /**
    * Delete a Type based on supplied id
@@ -88,7 +91,7 @@ const TypesController = {
    * @param {Object} res Response object
    * @returns {Object} Response object
    */
-  delete(req, res) {
+  static delete(req, res) {
     db.Type
       .findById(req.params.id)
       .then((type) => {
@@ -107,7 +110,7 @@ const TypesController = {
       .catch(() => res.status(400).send({
         message: 'An error occured. Ensure your parameters are valid!'
       }));
-  },
-};
+  }
+}
 
 export default TypesController;
