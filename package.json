@@ -8,12 +8,13 @@
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "db:migrate": "sequelize db:migrate",
     "seed:test": "NODE_ENV=test babel-node test/server/SeedHelper.js",
+    "reset:test":"NODE_ENV=test babel-node test/server/resetHelper.js",
     "seed:db": "node dist/test/server/SeedHelper.js",
     "start": "npm-run-all build seed:db start:server",
     "start:server": "node dist/lib/devServer.js",
     "start:nodemon": "nodemon lib/devServer.js --exec babel-node --presets es2015,stage-2",
     "test:server": "NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover ./node_modules/.bin/_mocha test/server/**/*.test.js",
-    "test": "npm-run-all seed:test test:server"
+    "test": "npm-run-all seed:test test:server reset:test"
   },
   "repository": {
     "type": "git",

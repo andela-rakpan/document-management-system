@@ -18,6 +18,7 @@ class SeedHelper {
    * @return {Void} - Returns Void
    */
   static init() {
+    logger.notice('Populating the Database....');
     model.sequelize.sync({
       force: true
     })
