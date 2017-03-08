@@ -1,7 +1,7 @@
 import RolesController from '../controllers/RolesController';
 import Authentication from '../middlewares/Authentication';
 
-const RolesRoute = (router) => {
+const rolesRoute = (router) => {
   // Create a new type or get all roles
   router.route('/roles')
    .post(Authentication.verifyToken, Authentication.verifyAdmin, RolesController.create)
@@ -14,4 +14,4 @@ const RolesRoute = (router) => {
     .delete(Authentication.verifyToken, Authentication.verifyAdmin, RolesController.delete);
 };
 
-export default RolesRoute;
+export default rolesRoute;
