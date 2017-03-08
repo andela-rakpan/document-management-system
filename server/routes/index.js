@@ -1,4 +1,4 @@
-import sersRoute from './usersRoute';
+import usersRoute from './usersRoute';
 import documentsRoute from './documentsRoute';
 import rolesRoute from './rolesRoute';
 import typesRoute from './typesRoute';
