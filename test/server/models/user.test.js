@@ -2,7 +2,7 @@
 
 import chai from 'chai';
 import model from '../../../server/models';
-import TestHelper from '../TestHelper';
+import TestHelper from '../helpers/TestHelper';
 
 const expect = chai.expect;
 const userParams = TestHelper.testUser3;

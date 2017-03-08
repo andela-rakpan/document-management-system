@@ -4,7 +4,7 @@ import supertest from 'supertest';
 import chai from 'chai';
 
 import app from '../../../lib/devServer';
-import TestHelper from '../TestHelper';
+import TestHelper from '../helpers/TestHelper';
 
 const expect = chai.expect;
 const request = supertest.agent(app);

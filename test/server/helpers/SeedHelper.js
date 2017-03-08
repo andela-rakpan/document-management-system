@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt-nodejs';
 import logger from 'fm-log';
 
-import model from '../../server/models';
+import model from '../../../server/models';
 import TestHelper from './TestHelper';
 
 const adminUser = TestHelper.testUser1;

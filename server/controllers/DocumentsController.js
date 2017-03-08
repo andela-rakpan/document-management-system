@@ -1,4 +1,7 @@
 import db from '../models';
+import Helper from '../helpers/Helper';
+
+let pagination;
 
 /**
  * DocumentsController class to create and manage documents
@@ -35,21 +38,32 @@ class DocumentsController {
     let query = {};
     query.limit = (req.query.limit > 0) ? req.query.limit : 10;
     query.offset = (req.query.offset > 0) ? req.query.offset : 0;
+
     if (req.decoded.isAdmin) {
       db.Document
         .findAndCountAll(query)
-        .then(documents => res.status(200).send({
-          documents: documents.rows, count: documents.count
-        }));
+        .then((documents) => {
+          pagination = Helper.pagination(
+            query.limit, query.offset, documents.count
+          );
+          res.status(200).send({
+            pagination, documents: documents.rows
+          });
+        });
     } else {
       query = {
         where: { access: 'public' }
       };
       db.Document
         .findAndCountAll(query)
-        .then(documents => res.status(200).send({
-          documents: documents.rows, count: documents.count
-        }));
+        .then((documents) => {
+          pagination = Helper.pagination(
+            query.limit, query.offset, documents.count
+          );
+          res.status(200).send({
+            pagination, documents: documents.rows
+          });
+        });
     }
   }
 
@@ -153,9 +167,14 @@ class DocumentsController {
     query.order = '"createdAt" DESC';
     db.Document
       .findAndCountAll(query)
-      .then(documents => res.status(200).send({
-        documents: documents.rows, count: documents.count
-      }));
+      .then((documents) => {
+        pagination = Helper.pagination(
+          query.limit, query.offset, documents.count
+        );
+        res.status(200).send({
+          pagination, documents: documents.rows
+        });
+      });
   }
 }
 

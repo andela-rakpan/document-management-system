@@ -1,4 +1,7 @@
 import db from '../models';
+import Helper from '../helpers/Helper';
+
+let pagination;
 
 /**
  * TypesController class to create and manage document types
@@ -33,9 +36,14 @@ class TypesController {
     query.offset = (req.query.offset > 0) ? req.query.offset : 0;
     db.Type
       .findAndCountAll(query)
-      .then(types => res.status(200).send({
-        types: types.rows, count: types.count
-      }));
+      .then((types) => {
+        pagination = Helper.pagination(
+          query.limit, query.offset, types.count
+        );
+        res.status(200).send({
+          pagination, types: types.rows
+        });
+      });
   }
 
   /**

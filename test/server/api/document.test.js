@@ -3,7 +3,7 @@
 import supertest from 'supertest';
 import chai from 'chai';
 
-import TestHelper from '../TestHelper';
+import TestHelper from '../helpers/TestHelper';
 import app from '../../../lib/devServer';
 
 const expect = chai.expect;

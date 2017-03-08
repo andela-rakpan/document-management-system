@@ -1,4 +1,7 @@
 import db from '../models';
+import Helper from '../helpers/Helper';
+
+let pagination;
 
 /**
  * RolesController class to create and manage roles
@@ -33,9 +36,14 @@ class RolesController {
     query.offset = (req.query.offset > 0) ? req.query.offset : 0;
     db.Role
       .findAndCountAll(query)
-      .then(roles => res.status(200).send({
-        roles: roles.rows, count: roles.count
-      }));
+      .then((roles) => {
+        pagination = Helper.pagination(
+          query.limit, query.offset, roles.count
+        );
+        res.status(200).send({
+          pagination, roles: roles.rows
+        });
+      });
   }
 
   /**

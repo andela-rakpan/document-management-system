@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
 import db from '../models';
-
+import Helper from '../helpers/Helper';
 
 const secret = process.env.SECRET || 'my secret key';
+let pagination;
 
 /**
  * UsersController class to create and manage users
@@ -101,9 +102,14 @@ class UsersController {
     query.attributes = { exclude: ['password'] };
     db.User
       .findAndCountAll(query)
-      .then(users => res.status(200).send({
-        users: users.rows, count: users.count
-      }));
+      .then((users) => {
+        pagination = Helper.pagination(
+          query.limit, query.offset, users.count
+        );
+        res.status(200).send({
+          pagination, users: users.rows
+        });
+      });
   }
 
    /**
@@ -130,10 +136,14 @@ class UsersController {
     query.offset = (req.query.offset > 0) ? req.query.offset : 0;
     db.Document
       .findAndCountAll(query)
-      .then(documents => res.status(200).send({
-        documents: documents.rows,
-        count: documents.count
-      }));
+      .then((documents) => {
+        pagination = Helper.pagination(
+          query.limit, query.offset, documents.count
+        );
+        res.status(200).send({
+          pagination, documents: documents.rows
+        });
+      });
   }
 
    /**

@@ -1,5 +1,5 @@
 import logger from 'fm-log';
-import model from '../../server/models';
+import model from '../../../server/models';
 
 /**
  * ResetHelper class to reset/empty database
