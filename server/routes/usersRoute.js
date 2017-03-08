@@ -1,7 +1,7 @@
 import UsersController from '../controllers/UsersController';
 import Authentication from '../middlewares/Authentication';
 
-const UsersRoute = (router) => {
+const usersRoute = (router) => {
   // Create a new user or get all users
   router.route('/users')
    .post(UsersController.create)
@@ -31,4 +31,4 @@ const UsersRoute = (router) => {
     .post(Authentication.verifyToken, UsersController.logout);
 };
 
-export default UsersRoute;
+export default usersRoute;
