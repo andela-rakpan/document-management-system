@@ -36,108 +36,106 @@ describe('Authentication:', () => {
       });
   });
 
-  // Test endponts that require authentication
-  describe('REQUESTS:', () => {
-    // Authenticate a User
-    describe('GET: (/api/documents) - ', () => {
-      it('should not authenticate a user if no token is provided', (done) => {
-        request.get('/api/documents')
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            expect(response.body.message).to
-              .equal('Authentication required to access this route!');
-            done();
-          });
-      });
-
-      it('should not authentiacate a user if no token is provided', (done) => {
-        request.get('/api/documents')
-          .set({
-            Authorization: 'this-is-an-invalid-token'
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            expect(response.body.message).to
-              .equal('Authentication failed due to invalid token!');
-            done();
-          });
-      });
-
-      it('should authenticate a user if valid token is provided', (done) => {
-        request.get('/api/documents')
-          .set({
-            Authorization: regularUserToken
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(200);
-            expect(Array.isArray(response.body.documents)).to.be.true;
-            expect(response.body.documents.length).to.equal(4);
-            done();
-          });
-      });
-    });
-
-    // Authenticate an admin - strictly admin route
-    describe('GET: (/api/users) - ', () => {
-      it('should not authenticate an admin if no token is provided', (done) => {
-        request.get('/api/users')
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            expect(response.body.message).to
-              .equal('Authentication required to access this route!');
-            done();
-          });
-      });
-
-      it('should not authentiacate an admin invalid is provided', (done) => {
-        request.get('/api/users')
-          .set({
-            Authorization: 'this-is-an-invalid-token'
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            expect(response.body.message).to
-              .equal('Authentication failed due to invalid token!');
-            done();
-          });
-      });
-
-      it('should not authentiacate an admin if user is not admin', (done) => {
-        request.get('/api/users')
-          .set({
-            Authorization: regularUserToken
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(403);
-            expect(response.body.message).to
-              .equal('Access Restricted; You are not an admin!');
-            done();
-          });
-      });
-
-      it('should authenticate an admin if user is admin', (done) => {
-        request.get('/api/users')
-          .set({
-            Authorization: adminUserToken
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(200);
-            expect(Array.isArray(response.body.users)).to.be.true;
-            expect(response.body.users.length).to.equal(3);
-            done();
-          });
-      });
-    });
-  });
-
   // Test middleware functions
   describe('Middleware Functions:', () => {
     let req, res;
-
     chai.use(spies);
 
     const buildResponse = () =>
       httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+
+    // Authenticate a User
+    describe('verifyToken - ', () => {
+      it('should not authenticate a user if no token is provided', (done) => {
+        res = buildResponse();
+        req = httpMocks.createRequest({
+          method: 'GET',
+          url: '/api/documents'
+        });
+
+        res.on('end', () => {
+          expect(res.statusCode).to.equal(401);
+          expect(res._getData().message).to
+            .equal('Authentication required to access this route!');
+          done();
+        });
+
+        Authentication.verifyToken(req, res);
+      });
+
+      it('should not authentiacate a user if invalid token is provided', (done) => {
+        res = buildResponse();
+        req = httpMocks.createRequest({
+          method: 'GET',
+          url: '/api/documents',
+          headers: { authorization: 'this-is-an-invalid-token' }
+        });
+
+        res.on('end', () => {
+          expect(res.statusCode).to.equal(401);
+          expect(res._getData().message).to
+            .equal('Authentication failed due to invalid token!');
+          done();
+        });
+
+        Authentication.verifyToken(req, res);
+      });
+
+      it('should authenticate a user if valid token is provided', (done) => {
+        res = buildResponse();
+        req = httpMocks.createRequest({
+          method: 'GET',
+          url: '/api/documents/3',
+          headers: { authorization: regularUserToken },
+        });
+        const next = () => 'called';
+
+        const spy = chai.spy(next);
+        expect(spy()).to.equal('called');
+        expect(spy).to.have.been.called();
+        done();
+        Authentication.verifyToken(req, res, next);
+      });
+    });
+
+    // Authenticate an admin - strictly admin route
+    describe('verifyAdmin - ', () => {
+      it('should not authentiacate an admin if user is not admin', (done) => {
+        res = buildResponse();
+        req = httpMocks.createRequest({
+          method: 'GET',
+          url: '/api/documents',
+          headers: { authorization: regularUserToken },
+          decoded: { roleId: regularUser.roleId }
+        });
+
+        res.on('end', () => {
+          expect(res.statusCode).to.equal(403);
+          expect(res._getData().message).to
+            .equal('Access Restricted; You are not an admin!');
+          done();
+        });
+
+        Authentication.verifyAdmin(req, res);
+      });
+
+      it('should authenticate an admin if user is admin', (done) => {
+        res = buildResponse();
+        req = httpMocks.createRequest({
+          method: 'GET',
+          url: '/api/documents',
+          headers: { authorization: adminUserToken },
+          decoded: { roleId: adminUser.roleId }
+        });
+        const next = () => 'called';
+
+        const spy = chai.spy(next);
+        expect(spy()).to.equal('called');
+        expect(spy).to.have.been.called();
+        done();
+        Authentication.verifyAdmin(req, res, next);
+      });
+    });
 
     // checkDocumentOwner middleware
     describe('checkDocumentOwner:', () => {
@@ -147,12 +145,12 @@ describe('Authentication:', () => {
         req = httpMocks.createRequest({
           method: 'GET',
           url: '/api/documents/invalidId',
-          headers: { authorization: regularUserToken },
           decoded: { roleId: regularUser.roleId },
           params: { id: 'invalidId' }
         });
 
         res.on('end', () => {
+          expect(res.statusCode).to.equal(400);
           expect(res._getData().message).to
             .equal('An error occured. Ensure your parameters are valid!');
           done();
@@ -167,12 +165,12 @@ describe('Authentication:', () => {
         req = httpMocks.createRequest({
           method: 'GET',
           url: '/api/documents/12345',
-          headers: { authorization: regularUserToken },
           decoded: { roleId: regularUser.roleId },
           params: { id: 12345 }
         });
 
         res.on('end', () => {
+          expect(res.statusCode).to.equal(404);
           expect(res._getData().message).to.equal('Document Not Found');
           done();
         });
@@ -186,12 +184,12 @@ describe('Authentication:', () => {
         req = httpMocks.createRequest({
           method: 'GET',
           url: '/api/documents/2',
-          headers: { authorization: regularUserToken },
           decoded: { roleId: regularUser.roleId },
           params: { id: 2 }
         });
 
         res.on('end', () => {
+          expect(res.statusCode).to.equal(403);
           expect(res._getData().message).to
             .equal('You are not authorized to access this document');
           done();
@@ -205,7 +203,6 @@ describe('Authentication:', () => {
         req = httpMocks.createRequest({
           method: 'GET',
           url: '/api/documents/3',
-          headers: { authorization: regularUserToken },
           decoded: { roleId: regularUser.roleId },
           params: { id: 3 }
         });
@@ -224,7 +221,6 @@ describe('Authentication:', () => {
         req = httpMocks.createRequest({
           method: 'GET',
           url: '/api/documents/4',
-          headers: { authorization: regularUserToken },
           decoded: { roleId: regularUser.roleId },
           params: { id: 4 }
         });
@@ -243,7 +239,6 @@ describe('Authentication:', () => {
         req = httpMocks.createRequest({
           method: 'GET',
           url: '/api/documents/4',
-          headers: { authorization: adminUserToken },
           decoded: { roleId: adminUser.roleId },
           params: { id: 4 }
         });
@@ -265,12 +260,12 @@ describe('Authentication:', () => {
         req = httpMocks.createRequest({
           method: 'GET',
           url: '/api/users/invalidId',
-          headers: { authorization: regularUserToken },
           decoded: { roleId: regularUser.roleId },
           params: { id: 'invalidId' }
         });
 
         res.on('end', () => {
+          expect(res.statusCode).to.equal(400);
           expect(res._getData().message).to
             .equal('An error occured. Ensure your parameters are valid!');
           done();
@@ -285,12 +280,12 @@ describe('Authentication:', () => {
         req = httpMocks.createRequest({
           method: 'GET',
           url: '/api/users/12345',
-          headers: { authorization: regularUserToken },
           decoded: { roleId: regularUser.roleId },
           params: { id: 12345 }
         });
 
         res.on('end', () => {
+          expect(res.statusCode).to.equal(404);
           expect(res._getData().message).to.equal('User Not Found');
           done();
         });
@@ -304,12 +299,12 @@ describe('Authentication:', () => {
         req = httpMocks.createRequest({
           method: 'GET',
           url: '/api/users/3',
-          headers: { authorization: regularUserToken },
           decoded: { roleId: regularUser.roleId, userId: regularUser.id },
           params: { id: 3 }
         });
 
         res.on('end', () => {
+          expect(res.statusCode).to.equal(403);
           expect(res._getData().message).to
             .equal('You are not authorized to access this user');
           done();
@@ -323,7 +318,6 @@ describe('Authentication:', () => {
         req = httpMocks.createRequest({
           method: 'GET',
           url: '/api/documents/2',
-          headers: { authorization: regularUserToken },
           decoded: { roleId: regularUser.roleId, userId: regularUser.id },
           params: { id: 2 }
         });
@@ -342,7 +336,6 @@ describe('Authentication:', () => {
         req = httpMocks.createRequest({
           method: 'GET',
           url: '/api/users/3',
-          headers: { authorization: adminUserToken },
           decoded: { roleId: adminUser.roleId, userId: adminUser.id },
           params: { id: 3 }
         });

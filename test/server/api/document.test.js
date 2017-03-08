@@ -11,7 +11,7 @@ const request = supertest.agent(app);
 
 const adminUser = TestHelper.testUser1;
 const regularUser = TestHelper.testUser2;
-const regularUser2 = TestHelper.testUser4;
+const secondRegularUser = TestHelper.testUser4;
 const invalidDocument = TestHelper.invalidDocument;
 const privateDocument = TestHelper.testDocument4;
 const publicDocument = TestHelper.testDocument5;
@@ -19,7 +19,7 @@ const publicDocument = TestHelper.testDocument5;
 describe('Document API:', () => {
   let adminUserToken;
   let regularUserToken;
-  let regularUserToken2;
+  let secondRegularUserToken;
   let privateDoc = {};
   let publicDoc = {};
 
@@ -37,10 +37,10 @@ describe('Document API:', () => {
             regularUser.id = res.body.userId;
 
             request.post('/api/users/login')
-              .send(regularUser2)
+              .send(secondRegularUser)
               .end((err2, res2) => {
-                regularUserToken2 = res2.body.token;
-                regularUser2.id = res2.body.userId;
+                secondRegularUserToken = res2.body.token;
+                secondRegularUser.id = res2.body.userId;
                 done();
               });
           });
@@ -64,12 +64,12 @@ describe('Document API:', () => {
           });
       });
 
-      it('should create a \'private\' document if document does not exists',
+      it('should create a \'private\' document',
       (done) => {
         request.post('/api/documents')
           .send(privateDocument)
           .set({
-            Authorization: regularUserToken2
+            Authorization: secondRegularUserToken
           })
           .end((error, response) => {
             privateDoc = response.body;
@@ -79,12 +79,27 @@ describe('Document API:', () => {
           });
       });
 
-      it('should create a \'public\' document if document does not exists',
+      it('should create a \'public\' document',
       (done) => {
         request.post('/api/documents')
           .send(publicDocument)
           .set({
-            Authorization: regularUserToken2
+            Authorization: secondRegularUserToken
+          })
+          .end((error, response) => {
+            publicDoc = response.body;
+            expect(publicDoc.title).to.equal(publicDocument.title);
+            expect(response.status).to.equal(201);
+            done();
+          });
+      });
+
+      it('should create a document with same title',
+      (done) => {
+        request.post('/api/documents')
+          .send(publicDocument)
+          .set({
+            Authorization: secondRegularUserToken
           })
           .end((error, response) => {
             publicDoc = response.body;
@@ -105,7 +120,7 @@ describe('Document API:', () => {
           .end((error, response) => {
             expect(response.status).to.equal(200);
             expect(Array.isArray(response.body.documents)).to.be.true;
-            expect(response.body.documents.length).to.equal(4);
+            expect(response.body.documents.length).to.equal(5);
             response.body.documents.forEach((document) => {
               expect(document.access).to.equal('public');
             });
@@ -121,7 +136,7 @@ describe('Document API:', () => {
           .end((error, response) => {
             expect(response.status).to.equal(200);
             expect(Array.isArray(response.body.documents)).to.be.true;
-            expect(response.body.documents.length).to.equal(7);
+            expect(response.body.documents.length).to.equal(8);
             done();
           });
       });
@@ -195,7 +210,7 @@ describe('Document API:', () => {
       it('should return the document if user is owner', (done) => {
         request.get(`/api/documents/${privateDoc.id}`)
           .set({
-            Authorization: regularUserToken2
+            Authorization: secondRegularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);
@@ -434,7 +449,7 @@ describe('Document API:', () => {
       (done) => {
         request.delete(`/api/documents/${privateDoc.id}`)
           .set({
-            Authorization: regularUserToken2
+            Authorization: secondRegularUserToken
           })
           .end((error, response) => {
             expect(response.status).to.equal(200);

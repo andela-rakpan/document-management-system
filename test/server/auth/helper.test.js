@@ -38,7 +38,10 @@ describe('Helpers:', () => {
           pagination = Helper.pagination(
             query.limit, query.offset, documents.count
           );
-          expect(pagination).to.equal(expectedResult);
+          expect(pagination.totalCount).to.equal(expectedResult.totalCount);
+          expect(pagination.currentPage).to.equal(expectedResult.currentPage);
+          expect(pagination.pageCount).to.equal(expectedResult.pageCount);
+          expect(pagination.pageSize).to.equal(expectedResult.pageSize);
         });
     });
 
@@ -61,7 +64,10 @@ describe('Helpers:', () => {
           pagination = Helper.pagination(
             query.limit, query.offset, documents.count
           );
-          expect(pagination).to.equal(expectedResult);
+          expect(pagination.totalCount).to.equal(expectedResult.totalCount);
+          expect(pagination.currentPage).to.equal(expectedResult.currentPage);
+          expect(pagination.pageCount).to.equal(expectedResult.pageCount);
+          expect(pagination.pageSize).to.equal(expectedResult.pageSize);
         });
     });
 
@@ -84,7 +90,10 @@ describe('Helpers:', () => {
           pagination = Helper.pagination(
             query.limit, query.offset, documents.count
           );
-          expect(pagination).to.equal(expectedResult);
+          expect(pagination.totalCount).to.equal(expectedResult.totalCount);
+          expect(pagination.currentPage).to.equal(expectedResult.currentPage);
+          expect(pagination.pageCount).to.equal(expectedResult.pageCount);
+          expect(pagination.pageSize).to.equal(expectedResult.pageSize);
         });
     });
 
@@ -107,7 +116,10 @@ describe('Helpers:', () => {
           pagination = Helper.pagination(
             query.limit, query.offset, documents.count
           );
-          expect(pagination).to.equal(expectedResult);
+          expect(pagination.totalCount).to.equal(expectedResult.totalCount);
+          expect(pagination.currentPage).to.equal(expectedResult.currentPage);
+          expect(pagination.pageCount).to.equal(expectedResult.pageCount);
+          expect(pagination.pageSize).to.equal(expectedResult.pageSize);
         });
     });
   });
