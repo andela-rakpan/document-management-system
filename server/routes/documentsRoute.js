@@ -1,7 +1,7 @@
 import DocumentsController from '../controllers/DocumentsController';
 import Authentication from '../middlewares/Authentication';
 
-const DocumentsRoute = (router) => {
+const documentsRoute = (router) => {
   // Create a new document or get all documents
   router.route('/documents')
    .post(Authentication.verifyToken, DocumentsController.create)
@@ -22,4 +22,4 @@ const DocumentsRoute = (router) => {
     .get(Authentication.verifyToken, DocumentsController.search);
 };
 
-export default DocumentsRoute;
+export default documentsRoute;
