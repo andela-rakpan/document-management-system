@@ -62,7 +62,8 @@ describe('Authentication:', () => {
         Authentication.verifyToken(req, res);
       });
 
-      it('should not authentiacate a user if invalid token is provided', (done) => {
+      it('should not authenticate a user if invalid token is provided',
+      (done) => {
         res = buildResponse();
         req = httpMocks.createRequest({
           method: 'GET',
@@ -80,11 +81,28 @@ describe('Authentication:', () => {
         Authentication.verifyToken(req, res);
       });
 
+      it('should not authenticate a user (continue) if token is invalid',
+      () => {
+        res = buildResponse();
+        req = httpMocks.createRequest({
+          method: 'GET',
+          url: '/api/documents',
+          headers: { authorization: 'this-is-an-invalid-token' }
+        });
+
+        const middlewareStub = {
+          next: () => {}
+        };
+        sinon.spy(middlewareStub, 'next');
+        Authentication.verifyToken(req, res, middlewareStub.next);
+        expect(middlewareStub.next).to.not.have.been.calledOnce;
+      });
+
       it('should authenticate a user if valid token is provided', () => {
         res = buildResponse();
         req = httpMocks.createRequest({
           method: 'GET',
-          url: '/api/documents/3',
+          url: '/api/documents',
           headers: { authorization: regularUserToken },
         });
         const middlewareStub = {
@@ -98,7 +116,7 @@ describe('Authentication:', () => {
 
     // Authenticate an admin - strictly admin route
     describe('verifyAdmin - ', () => {
-      it('should not authentiacate an admin if user is not admin', (done) => {
+      it('should not authenticate an admin if user is not admin', (done) => {
         res = buildResponse();
         req = httpMocks.createRequest({
           method: 'GET',
@@ -115,6 +133,24 @@ describe('Authentication:', () => {
         });
 
         Authentication.verifyAdmin(req, res);
+      });
+
+      it('should not authenticate (continue) if user is not admin',
+      () => {
+        res = buildResponse();
+        req = httpMocks.createRequest({
+          method: 'GET',
+          url: '/api/documents',
+          headers: { authorization: regularUserToken },
+          decoded: { roleId: regularUser.roleId }
+        });
+
+        const middlewareStub = {
+          next: () => {}
+        };
+        sinon.spy(middlewareStub, 'next');
+        Authentication.verifyAdmin(req, res, middlewareStub.next);
+        expect(middlewareStub.next).to.not.have.been.calledOnce;
       });
 
       it('should authenticate an admin if user is admin', () => {
@@ -192,6 +228,24 @@ describe('Authentication:', () => {
           done();
         });
         Authentication.checkDocumentOwner(req, res);
+      });
+
+      it('should not continue if document is private and user is not owner',
+      () => {
+        res = buildResponse();
+        req = httpMocks.createRequest({
+          method: 'GET',
+          url: '/api/documents/2',
+          decoded: { roleId: regularUser.roleId },
+          params: { id: 2 }
+        });
+
+        const middlewareStub = {
+          next: () => {}
+        };
+        sinon.spy(middlewareStub, 'next');
+        Authentication.checkDocumentOwner(req, res, middlewareStub.next);
+        expect(middlewareStub.next).to.not.have.been.calledOnce;
       });
 
       it('should continue if document is public and user is not owner',
@@ -302,6 +356,24 @@ describe('Authentication:', () => {
           done();
         });
         Authentication.checkCurrentUser(req, res);
+      });
+
+      it('should not continue if userid is not current user',
+      () => {
+        res = buildResponse();
+        req = httpMocks.createRequest({
+          method: 'GET',
+          url: '/api/users/3',
+          decoded: { roleId: regularUser.roleId, userId: regularUser.id },
+          params: { id: 3 }
+        });
+
+        const middlewareStub = {
+          next: () => {}
+        };
+        sinon.spy(middlewareStub, 'next');
+        Authentication.checkCurrentUser(req, res, middlewareStub.next);
+        expect(middlewareStub.next).to.not.have.been.calledOnce;
       });
 
       it('should continue if userid is current user',

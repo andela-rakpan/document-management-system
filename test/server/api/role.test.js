@@ -208,6 +208,40 @@ describe('Role API:', () => {
           });
       });
 
+      it('should not edit role if id is default admin role', (done) => {
+        const fieldsToUpdate = {
+          title: 'the super admin'
+        };
+        request.put('/api/roles/1')
+          .set({
+            Authorization: adminUserToken
+          })
+          .send(fieldsToUpdate)
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
+            expect(response.body.message).to
+              .equal('You cannot update default roles');
+            done();
+          });
+      });
+
+      it('should not edit role if id is default regular role', (done) => {
+        const fieldsToUpdate = {
+          title: 'the super admin'
+        };
+        request.put('/api/roles/2')
+          .set({
+            Authorization: adminUserToken
+          })
+          .send(fieldsToUpdate)
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
+            expect(response.body.message).to
+              .equal('You cannot update default roles');
+            done();
+          });
+      });
+
       it('should perform edit when valid id is supplied and user is admin',
       (done) => {
         const fieldsToUpdate = {
@@ -259,6 +293,32 @@ describe('Role API:', () => {
             expect(response.status).to.equal(200);
             expect(response.body.message).to
               .equal('Role deleted successfully.');
+            done();
+          });
+      });
+
+      it('should not delete if role is default admin role', (done) => {
+        request.delete('/api/roles/1')
+          .set({
+            Authorization: adminUserToken
+          })
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
+            expect(response.body.message).to
+              .equal('You cannot delete default roles');
+            done();
+          });
+      });
+
+      it('should not delete if role is default regular role', (done) => {
+        request.delete('/api/roles/2')
+          .set({
+            Authorization: adminUserToken
+          })
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
+            expect(response.body.message).to
+              .equal('You cannot delete default roles');
             done();
           });
       });

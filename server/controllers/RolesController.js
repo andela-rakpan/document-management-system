@@ -82,6 +82,12 @@ class RolesController {
           });
         }
 
+        if (role.title === 'admin' || role.title === 'regular') {
+          return res.status(400).send({
+            message: 'You cannot update default roles',
+          });
+        }
+
         role
           .update(req.body, {
             fields: Object.keys(req.body)
@@ -106,6 +112,11 @@ class RolesController {
         if (!role) {
           return res.status(404).send({
             message: 'Role Not Found',
+          });
+        }
+        if (role.title === 'admin' || role.title === 'regular') {
+          return res.status(400).send({
+            message: 'You cannot delete default roles',
           });
         }
 
