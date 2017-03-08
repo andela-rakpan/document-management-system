@@ -3,7 +3,7 @@ import documentsRoute from './documentsRoute';
 import rolesRoute from './rolesRoute';
 import typesRoute from './typesRoute';
 
-const Routes = (router) => {
+const routes = (router) => {
   usersRoute(router);
   documentsRoute(router);
   rolesRoute(router);
