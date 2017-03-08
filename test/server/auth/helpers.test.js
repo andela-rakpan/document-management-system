@@ -4,7 +4,7 @@
 import chai from 'chai';
 
 import model from '../../../server/models';
-import Helper from '../../../server/helpers/Helper';
+import ControllerHelper from '../../../server/helpers/ControllerHelper';
 
 const expect = chai.expect;
 
@@ -35,7 +35,7 @@ describe('Helpers:', () => {
       model.Document
         .findAndCountAll(query)
         .then((documents) => {
-          pagination = Helper.pagination(
+          pagination = ControllerHelper.pagination(
             query.limit, query.offset, documents.count
           );
           expect(pagination.totalCount).to.equal(expectedResult.totalCount);
@@ -61,7 +61,7 @@ describe('Helpers:', () => {
       model.Document
         .findAndCountAll(query)
         .then((documents) => {
-          pagination = Helper.pagination(
+          pagination = ControllerHelper.pagination(
             query.limit, query.offset, documents.count
           );
           expect(pagination.totalCount).to.equal(expectedResult.totalCount);
@@ -87,7 +87,7 @@ describe('Helpers:', () => {
       model.Document
         .findAndCountAll(query)
         .then((documents) => {
-          pagination = Helper.pagination(
+          pagination = ControllerHelper.pagination(
             query.limit, query.offset, documents.count
           );
           expect(pagination.totalCount).to.equal(expectedResult.totalCount);
@@ -113,7 +113,7 @@ describe('Helpers:', () => {
       model.Document
         .findAndCountAll(query)
         .then((documents) => {
-          pagination = Helper.pagination(
+          pagination = ControllerHelper.pagination(
             query.limit, query.offset, documents.count
           );
           expect(pagination.totalCount).to.equal(expectedResult.totalCount);
