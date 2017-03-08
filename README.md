@@ -9,6 +9,13 @@ Document Management System is an API that manages documents with users, document
 
 - The source code employs ES6 syntax traspiled down to ES5 using Babel
 
+
+#### _POSTMAN Collection_
+[DMS-API](https://www.getpostman.com/collections/77dab144dabb35e1fa7b)
+
+#### _HOSTED at Heroku_
+[https://document-mgt-system.herokuapp.com/](https://document-mgt-system.herokuapp.com)
+
 ### **API Features**
 
 The following features make up the Document Management System API:
@@ -64,36 +71,36 @@ The following features make up the Document Management System API:
 
 #### Users Endpoint
 
-##### _To CREATE a user_
+##### <i class="icon-user"></i> _To CREATE a user_
 * Make a **POST** request to `/api/users` endpoint.  
 * Send data with valid `email`, `password`,  `firstname` and  `lastname` attributes.   
 * A token is returned along with the created user.  
 
-##### _To LOGIN a user_   
+##### <i class="icon-lock"></i> _To LOGIN a user_   
 * Make a **POST** request to `/api/users/login` endpoint.   
 * Send data with valid `email` and `password` attributes.
 * A token is returned along with the authenticated user
 
 
-##### _To GET all users_  
+##### <i class="icon-users"></i>_To GET all users_  
 * Make a **GET** request to `/api/users`  
 * Set an admin user's token in the authorization headers.  
 * An array of all users is returned.
 
-##### _To GET a user_   
+##### <i class="icon-user"></i> _To GET a user_   
 * Make a **GET** request to `/api/users/:id`   
 * Pass `id` of the user in the url parameter.
 * Set the user's token in the authorization headers.
 * The user details is returned, if found.
 
-##### _To UPDATE a user_  
+##### <i class="icon-pencil"></i> _To UPDATE a user_  
 * Make a **PUT** request to `/api/users/:username`   
 * Pass `id` of the user in the url parameter.    
 * Set the user's token in the authorization headers.
 * Send updated data with valid `email`, `password`,  `firstname` and/or  `lastname` attributes.
 * The updated user details is returned.
 
-##### _To DELETE a user_  
+#####<i class="icon-trash"></i> _To DELETE a user_  
 * Make a **DELETE** request to `/api/users/:id`   
 * Pass `id` of the user in the url parameter.    
 * Set admin user token in the authorization headers.
@@ -101,32 +108,32 @@ The following features make up the Document Management System API:
 
 #### Roles Endpoint
 
-##### _To CREATE a role_   
+##### <i class="icon-file"></i>_To CREATE a role_   
 - Make a **POST** request to `/api/roles` endpoint.  
 - Set admin user token in the authorization headers.   
 - Send data with valid `title` attributes.    
 - The created user is returned
 
-##### _To GET all roles_  
+##### <i class="icon-folder"></i> _To GET all roles_  
 - Make a **GET** request to `/api/roles`  
 - Set an admin user token in the authorization headers.  
 - An array of all roles is returned.
 
 
-##### _To GET a role_   
+##### <i class="icon-file"></i> _To GET a role_   
 - Make a **GET** request to `/api/roles/:id`  
 - Pass `id` of the role in the url parameter.  
 - Set the admin user token in the authorization headers.
 - The role is returned.
 
-##### _To UPDATE a role_  
+##### <i class="icon-pencil"></i> _To UPDATE a role_  
 - Make a **PUT** request to `/api/roles/:id`   
 - Pass `id` of the role in the url parameter.  
 - Set the admin user token in the authorization headers.   
 - Send a valid updated `title` data on a PUT request.
 - The updated role is returned.
 
-##### _To DELETE a role_  
+##### <i class="icon-trash"></i> _To DELETE a role_  
 - Make a **DELETE** request to `/api/roles/:id`   
 - Pass `id` of the role in the url parameter.  
 - Set the admin user token in the authorization headers.   
@@ -134,31 +141,31 @@ The following features make up the Document Management System API:
 
 #### Documents Endpoint
 
-##### _To CREATE a document_   
+##### <i class="icon-file"></i> _To CREATE a document_   
 - Make a **POST** request to `/api/documents` endpoint.  
 - Set a user's token in the authorization headers.   
 - Send data with valid `title`, `content`, `access`, `ownerId` and `typeId` attributes.    
 - The created document is returned.
 
-##### _To GET all documents_  
+##### <i class="icon-folder"></i> _To GET all documents_  
 - Make a **GET** request to `/api/documents`  
 - Set a admin user token in the authorization headers.
 - An array of all documents is returned.
 
-##### _To GET a document_   
+##### <i class="icon-file"></i> _To GET a document_   
 - Make a **GET** request to `/api/documents/:id`  
 - Pass `id` of the document in the url parameters.  
 - Set a user token in the authorization headers.
 - The document is returned if user is owner.
 
-##### _To UPDATE a document_  
+##### <i class="icon-pencil"></i> _To UPDATE a document_  
 - Make a **PUT** request to `/api/documents/:id`   
 - Pass `id` of the document in the url parameters.  
 - Set a user token in the authorization headers.   
 - Send a valid updated `title`, `content`, `access`, `ownerId` and/or `typeId` data on the PUT request.
 - The updated document is returned.
 
-##### _To DELETE a document_  
+##### <i class="icon-trash"></i> _To DELETE a document_  
 - Make a **DELETE** request to `/api/documents/:id`   
 - Pass `id` of the document in the url parameters.  
 - Set a user token in the authorization headers.   
@@ -166,31 +173,31 @@ The following features make up the Document Management System API:
 
 #### Types Endpoint
 
-##### _To CREATE a document type_   
+##### <i class="icon-file"></i> _To CREATE a document type_   
 - Make a **POST** request to `/api/types` endpoint.  
 - Set a user token in the authorization headers.   
 - Send data with valid `title` attributes. 
 - The created role is returned.   
 
-##### _To GET all types_  
+##### <i class="icon-folder"></i> _To GET all types_  
 - Make a **GET** request to `/api/types`  
 - Set a user token in the authorization headers.
 - An array of types is returned.  
 
-##### _To GET a type_   
+##### <i class="icon-file"></i> _To GET a type_   
 - Make a **GET** request to `/api/types/:id`  
 - Pass `id` of the type in the url parameters.  
 - Set a user token in the authorization headers.
 - The type is returned.
 
-##### _To UPDATE a type_  
+##### <i class="icon-pencil"></i> _To UPDATE a type_  
 - Make a **PUT** request to `/api/types/:id`   
 - Pass `id` of the type in the url parameters.  
 - Set a admin user token in the authorization headers.   
 - Send a valid updated `title` data on the PUT request.
 - The updated type is returned.
 
-##### _To DELETE a type_  
+##### <i class="icon-trash"></i> _To DELETE a type_  
 - Make a **DELETE** request to `/api/types/:id`   
 - Pass `id` of the type in the url parameters.  
 - Set a admin user token in the authorization headers. 
@@ -198,18 +205,23 @@ The following features make up the Document Management System API:
 
 #### Search Endpoint   
 
-##### _To SEARCH documents (public and private)_  
+##### <i class="icon-search"></i> _To SEARCH documents (public and private)_  
 - Make a **GET** request to `/api/search/documents` endpoint.  
 - Set a user token in the authorization headers.   
 - Send data with valid `term` query in the `URL`; for example, to search for documents that contain 'tia', send `/api/search/documents?term=tia`. 
 - An array of `public` as well as personal documents matching the search term is returned.   
 
+### _**Contributing**_
+Contributors are welcome to further enhance the features of this API by contributing to its development. The following guidelines should guide you in contributing to this project:
 
-#### _POSTMAN Collection_
-[DMS-API](https://www.getpostman.com/collections/77dab144dabb35e1fa7b)
+1. Fork the repository.
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
+5. Submit a pull request describing the feature(s) you have added.
+6. Include a `feature.md` readme file with a detailed description of the feature(s) you have added, along with clear instructions of how to use the features(s) you have added. This readme file will be reviewed and included in the original readme if feature is approved.
 
-#### _HOSTED at Heroku_
-[https://document-mgt-system.herokuapp.com/](https://document-mgt-system.herokuapp.com)
+Ensure your codes follow the [AirBandB Javascript Styles Guide](https://github.com/airbnb/javascript)
 
 ### **Author**
 > _**Raphael Ifiok Akpan**_ 
