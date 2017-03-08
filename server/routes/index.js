@@ -1,13 +1,13 @@
-import UsersRoute from './UsersRoute';
-import DocumentsRoute from './DocumentsRoute';
-import RolesRoute from './RolesRoute';
-import TypesRoute from './TypesRoute';
+import sersRoute from './usersRoute';
+import documentsRoute from './documentsRoute';
+import rolesRoute from './rolesRoute';
+import typesRoute from './typesRoute';
 
 const Routes = (router) => {
-  UsersRoute(router);
-  DocumentsRoute(router);
-  RolesRoute(router);
-  TypesRoute(router);
+  usersRoute(router);
+  documentsRoute(router);
+  rolesRoute(router);
+  typesRoute(router);
 };
 
-export default Routes;
+export default routes;
