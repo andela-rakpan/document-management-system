@@ -228,7 +228,7 @@ Contributors are welcome to further enhance the features of this API by contribu
 5. Submit a pull request describing the feature(s) you have added.
 6. Include a `feature.md` readme file with a detailed description of the feature(s) you have added, along with clear instructions of how to use the features(s) you have added. This readme file will be reviewed and included in the original readme if feature is approved.
 
-Ensure your codes follow the [AirBandB Javascript Styles Guide](https://github.com/airbnb/javascript)
+Ensure your codes follow the [AirBnB Javascript Styles Guide](https://github.com/airbnb/javascript)
 
 ### **Author**
 > _**Raphael Ifiok Akpan**_ 
