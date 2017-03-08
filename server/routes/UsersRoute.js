@@ -10,16 +10,16 @@ const UsersRoute = (router) => {
 
   // Update, delete or get a specific user
   router.route('/users/:id')
-    .put(Authentication.verifyToken, Authentication.isAdmin,
+    .put(Authentication.verifyToken,
       Authentication.checkCurrentUser, UsersController.updateUser)
-    .get(Authentication.verifyToken, Authentication.isAdmin,
+    .get(Authentication.verifyToken,
       Authentication.checkCurrentUser, UsersController.retrieveUser)
     .delete(Authentication.verifyToken, Authentication.verifyAdmin,
       UsersController.deleteUser);
 
   // Get a single user's documents
   router.route('/users/:id/documents')
-    .get(Authentication.verifyToken, Authentication.isAdmin,
+    .get(Authentication.verifyToken,
       Authentication.checkCurrentUser, UsersController.retrieveDocuments);
 
   // Log in a user

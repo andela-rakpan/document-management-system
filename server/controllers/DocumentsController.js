@@ -35,36 +35,39 @@ class DocumentsController {
    * @returns {Object} Response object
    */
   static listAll(req, res) {
-    let query = {};
-    query.limit = (req.query.limit > 0) ? req.query.limit : 10;
-    query.offset = (req.query.offset > 0) ? req.query.offset : 0;
+    db.Role.findById(req.decoded.roleId)
+      .then((role) => {
+        let query = {};
+        query.limit = (req.query.limit > 0) ? req.query.limit : 10;
+        query.offset = (req.query.offset > 0) ? req.query.offset : 0;
 
-    if (req.decoded.isAdmin) {
-      db.Document
-        .findAndCountAll(query)
-        .then((documents) => {
-          pagination = Helper.pagination(
-            query.limit, query.offset, documents.count
-          );
-          res.status(200).send({
-            pagination, documents: documents.rows
-          });
-        });
-    } else {
-      query = {
-        where: { access: 'public' }
-      };
-      db.Document
-        .findAndCountAll(query)
-        .then((documents) => {
-          pagination = Helper.pagination(
-            query.limit, query.offset, documents.count
-          );
-          res.status(200).send({
-            pagination, documents: documents.rows
-          });
-        });
-    }
+        if (role.title === 'admin') {
+          db.Document
+            .findAndCountAll(query)
+            .then((documents) => {
+              pagination = Helper.pagination(
+                query.limit, query.offset, documents.count
+              );
+              res.status(200).send({
+                pagination, documents: documents.rows
+              });
+            });
+        } else {
+          query = {
+            where: { access: 'public' }
+          };
+          db.Document
+            .findAndCountAll(query)
+            .then((documents) => {
+              pagination = Helper.pagination(
+                query.limit, query.offset, documents.count
+              );
+              res.status(200).send({
+                pagination, documents: documents.rows
+              });
+            });
+        }
+      });
   }
 
   /**
@@ -84,18 +87,21 @@ class DocumentsController {
    * @returns {Object} Response object
    */
   static update(req, res) {
-    // Ensure that the onwerId property is not updated!
-    if (req.body.ownerId && !req.decoded.isAdmin) {
-      return res.status(400).send({
-        message: 'You cannot edit document ownerId property'
+    db.Role.findById(req.decoded.roleId)
+      .then((role) => {
+        // Ensure that the onwerId property is not updated!
+        if (req.body.ownerId && !(role.title === 'admin')) {
+          return res.status(400).send({
+            message: 'You cannot edit document ownerId property'
+          });
+        }
+        req.decoded.document
+          .update(req.body, { fields: Object.keys(req.body) })
+          .then(updatedDocument => res.status(200).send({
+            message: 'Update successful!',
+            updatedDocument
+          }));
       });
-    }
-    req.decoded.document
-      .update(req.body, { fields: Object.keys(req.body) })
-      .then(updatedDocument => res.status(200).send({
-        message: 'Update successful!',
-        updatedDocument
-      }));
   }
 
   /**
@@ -119,61 +125,64 @@ class DocumentsController {
    * @returns {Object} - Returns response object
    */
   static search(req, res) {
-    const term = req.query.term;
+    db.Role.findById(req.decoded.roleId)
+      .then((role) => {
+        const term = req.query.term;
 
-    if (term === '') {
-      return res.status(400).send({
-        message: 'Invalid Search Parameter!'
-      });
-    }
-    let query = {
-      where: {
-        $and: [{
-          $or: {
-            title: {
-              $iLike: `%${term}%`
-            },
-            content: {
-              $iLike: `%${term}%`
-            }
-          }
-        }, {
-          $or: {
-            access: { $ne: 'private' },
-            ownerId: req.decoded.userId
-          }
+        if (term === '') {
+          return res.status(400).send({
+            message: 'Invalid Search Parameter!'
+          });
         }
-        ]
-      }
-    };
-
-    if (req.decoded.isAdmin) {
-      query = {
-        where: {
-          $or: {
-            title: {
-              $iLike: `%${term}%`
-            },
-            content: {
-              $iLike: `%${term}%`
+        let query = {
+          where: {
+            $and: [{
+              $or: {
+                title: {
+                  $iLike: `%${term}%`
+                },
+                content: {
+                  $iLike: `%${term}%`
+                }
+              }
+            }, {
+              $or: {
+                access: { $ne: 'private' },
+                ownerId: req.decoded.userId
+              }
             }
+            ]
           }
-        }
-      };
-    }
+        };
 
-    query.limit = (req.query.limit > 0) ? req.query.limit : 10;
-    query.offset = (req.query.offset > 0) ? req.query.offset : 0;
-    query.order = '"createdAt" DESC';
-    db.Document
-      .findAndCountAll(query)
-      .then((documents) => {
-        pagination = Helper.pagination(
-          query.limit, query.offset, documents.count
-        );
-        res.status(200).send({
-          pagination, documents: documents.rows
-        });
+        if (role.title === 'admin') {
+          query = {
+            where: {
+              $or: {
+                title: {
+                  $iLike: `%${term}%`
+                },
+                content: {
+                  $iLike: `%${term}%`
+                }
+              }
+            }
+          };
+        }
+
+        query.limit = (req.query.limit > 0) ? req.query.limit : 10;
+        query.offset = (req.query.offset > 0) ? req.query.offset : 0;
+        query.order = '"createdAt" DESC';
+        db.Document
+          .findAndCountAll(query)
+          .then((documents) => {
+            pagination = Helper.pagination(
+              query.limit, query.offset, documents.count
+            );
+            res.status(200).send({
+              pagination, documents: documents.rows
+            });
+          });
       });
   }
 }

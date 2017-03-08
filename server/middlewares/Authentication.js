@@ -57,25 +57,6 @@ class Authentication {
   }
 
   /**
-   * isAdmin - Verifies if the user is an admin or not
-   *
-   * @param  {Object} req  Request Object
-   * @param  {Object} res  Response Object
-   * @param  {Object} next
-   * @returns {Object} Response Object
-   */
-  static isAdmin(req, res, next) {
-    req.decoded.isAdmin = false;
-    db.Role.findById(req.decoded.roleId)
-      .then((role) => {
-        if (role.title === 'admin') {
-          req.decoded.isAdmin = true;
-        }
-        next();
-      });
-  }
-
-  /**
    * checkDocumentOwner - Verifies if the user is owner of the document
    *
    * @param  {Object} req  Request Object
@@ -84,27 +65,30 @@ class Authentication {
    * @returns {Object} Response Object
    */
   static checkDocumentOwner(req, res, next) {
-    req.decoded.document = {};
-    db.Document
-      .findById(req.params.id)
-      .then((document) => {
-        if (!document) {
-          return res.status(404).send({
-            message: 'Document Not Found',
-          });
-        }
+    db.Role.findById(req.decoded.roleId)
+      .then((role) => {
+        req.decoded.document = {};
+        db.Document
+          .findById(req.params.id)
+          .then((document) => {
+            if (!document) {
+              return res.status(404).send({
+                message: 'Document Not Found',
+              });
+            }
 
-        if (!req.decoded.isAdmin && document.access === 'private' &&
-        !(req.decoded.userId === document.ownerId)) {
-          return res.status(403)
-            .send({ message: 'You are not authorized to access this document' });
-        }
-        req.decoded.document = document;
-        next();
-      })
-      .catch(() => res.status(400).send({
-        message: 'An error occured. Ensure your parameters are valid!'
-      }));
+            if (!(role.title === 'admin') && document.access === 'private' &&
+            !(req.decoded.userId === document.ownerId)) {
+              return res.status(403)
+                .send({ message: 'You are not authorized to access this document' });
+            }
+            req.decoded.document = document;
+            next();
+          })
+          .catch(() => res.status(400).send({
+            message: 'An error occured. Ensure your parameters are valid!'
+          }));
+      });
   }
 
   /**
@@ -116,28 +100,31 @@ class Authentication {
    * @returns {Object} Response Object
    */
   static checkCurrentUser(req, res, next) {
-    req.decoded.user = {};
-    db.User
-      .findById(req.params.id, {
-        attributes: { exclude: ['password'] }
-      })
-      .then((user) => {
-        if (!user) {
-          return res.status(404).send({
-            message: 'User Not Found',
-          });
-        }
+    db.Role.findById(req.decoded.roleId)
+      .then((role) => {
+        req.decoded.user = {};
+        db.User
+          .findById(req.params.id, {
+            attributes: { exclude: ['password'] }
+          })
+          .then((user) => {
+            if (!user) {
+              return res.status(404).send({
+                message: 'User Not Found',
+              });
+            }
 
-        if (!req.decoded.isAdmin && !(req.decoded.userId === user.id)) {
-          return res.status(403)
-            .send({ message: 'You are not authorized to access this user' });
-        }
-        req.decoded.user = user;
-        next();
-      })
-     .catch(() => res.status(400).send({
-       message: 'An error occured. Ensure your parameters are valid!'
-     }));
+            if (!(role.title === 'admin') && !(req.decoded.userId === user.id)) {
+              return res.status(403)
+                .send({ message: 'You are not authorized to access this user' });
+            }
+            req.decoded.user = user;
+            next();
+          })
+        .catch(() => res.status(400).send({
+          message: 'An error occured. Ensure your parameters are valid!'
+        }));
+      });
   }
 }
 

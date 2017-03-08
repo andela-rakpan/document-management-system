@@ -153,25 +153,28 @@ class UsersController {
    * @returns {Object} Response object
    */
   static updateUser(req, res) {
-    // Prevent update on user id property
-    if (req.body.id) {
-      return res.status(400).send({
-        message: 'You cannot edit user id property'
-      });
-    }
-    // Prevent non-admin from updating role of a user
-    if (!req.decoded.isAdmin && req.body.roleId) {
-      return res.status(400).send({
-        message: 'You cannot edit user roleId property'
-      });
-    }
+    db.Role.findById(req.decoded.roleId)
+      .then((role) => {
+        // Prevent update on user id property
+        if (req.body.id) {
+          return res.status(400).send({
+            message: 'You cannot edit user id property'
+          });
+        }
+        // Prevent non-admin from updating role of a user
+        if (!(role.title === 'admin') && req.body.roleId) {
+          return res.status(400).send({
+            message: 'You cannot edit user roleId property'
+          });
+        }
 
-    req.decoded.user
-      .update(req.body, { fields: Object.keys(req.body) })
-      .then(updatedUser => res.status(200).send({
-        message: 'User updated successfully',
-        updatedUser
-      }));
+        req.decoded.user
+          .update(req.body, { fields: Object.keys(req.body) })
+          .then(updatedUser => res.status(200).send({
+            message: 'User updated successfully',
+            updatedUser
+          }));
+      });
   }
 
    /**

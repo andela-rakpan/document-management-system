@@ -5,21 +5,21 @@ const DocumentsRoute = (router) => {
   // Create a new document or get all documents
   router.route('/documents')
    .post(Authentication.verifyToken, DocumentsController.create)
-   .get(Authentication.verifyToken, Authentication.isAdmin,
+   .get(Authentication.verifyToken,
      DocumentsController.listAll);
 
   // Get, update and delete a particular document
   router.route('/documents/:id')
-    .get(Authentication.verifyToken, Authentication.isAdmin,
+    .get(Authentication.verifyToken,
       Authentication.checkDocumentOwner, DocumentsController.retrieve)
-    .put(Authentication.verifyToken, Authentication.isAdmin,
+    .put(Authentication.verifyToken,
       Authentication.checkDocumentOwner, DocumentsController.update)
-    .delete(Authentication.verifyToken, Authentication.isAdmin,
+    .delete(Authentication.verifyToken,
       Authentication.checkDocumentOwner, DocumentsController.delete);
 
   // Search documents
   router.route('/search/documents')
-    .get(Authentication.verifyToken, Authentication.isAdmin, DocumentsController.search);
+    .get(Authentication.verifyToken, DocumentsController.search);
 };
 
 export default DocumentsRoute;
