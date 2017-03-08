@@ -1,7 +1,7 @@
 import TypesController from '../controllers/TypesController';
 import Authentication from '../middlewares/Authentication';
 
-const TypesRoute = (router) => {
+const typesRoute = (router) => {
   // Create a new type or get all types
   router.route('/types')
    .post(Authentication.verifyToken, TypesController.create)
@@ -14,4 +14,4 @@ const TypesRoute = (router) => {
     .delete(Authentication.verifyToken, Authentication.verifyAdmin, TypesController.delete);
 };
 
-export default TypesRoute;
+export default typesRoute;
