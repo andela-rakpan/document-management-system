@@ -5,7 +5,7 @@ import supertest from 'supertest';
 import chai from 'chai';
 import httpMocks from 'node-mocks-http';
 import events from 'events';
-import spies from 'chai-spies';
+import sinon from 'sinon';
 
 import TestHelper from '../helpers/TestHelper';
 import app from '../../../lib/devServer';
@@ -39,7 +39,6 @@ describe('Authentication:', () => {
   // Test middleware functions
   describe('Middleware Functions:', () => {
     let req, res;
-    chai.use(spies);
 
     const buildResponse = () =>
       httpMocks.createResponse({ eventEmitter: events.EventEmitter });
@@ -81,20 +80,19 @@ describe('Authentication:', () => {
         Authentication.verifyToken(req, res);
       });
 
-      it('should authenticate a user if valid token is provided', (done) => {
+      it('should authenticate a user if valid token is provided', () => {
         res = buildResponse();
         req = httpMocks.createRequest({
           method: 'GET',
           url: '/api/documents/3',
           headers: { authorization: regularUserToken },
         });
-        const next = () => 'called';
-
-        const spy = chai.spy(next);
-        expect(spy()).to.equal('called');
-        expect(spy).to.have.been.called();
-        done();
-        Authentication.verifyToken(req, res, next);
+        const middlewareStub = {
+          next: () => {}
+        };
+        sinon.spy(middlewareStub, 'next');
+        Authentication.verifyToken(req, res, middlewareStub.next);
+        expect(middlewareStub.next).to.have.been.calledOnce;
       });
     });
 
@@ -119,7 +117,7 @@ describe('Authentication:', () => {
         Authentication.verifyAdmin(req, res);
       });
 
-      it('should authenticate an admin if user is admin', (done) => {
+      it('should authenticate an admin if user is admin', () => {
         res = buildResponse();
         req = httpMocks.createRequest({
           method: 'GET',
@@ -127,13 +125,12 @@ describe('Authentication:', () => {
           headers: { authorization: adminUserToken },
           decoded: { roleId: adminUser.roleId }
         });
-        const next = () => 'called';
-
-        const spy = chai.spy(next);
-        expect(spy()).to.equal('called');
-        expect(spy).to.have.been.called();
-        done();
-        Authentication.verifyAdmin(req, res, next);
+        const middlewareStub = {
+          next: () => {}
+        };
+        sinon.spy(middlewareStub, 'next');
+        Authentication.verifyAdmin(req, res, middlewareStub.next);
+        expect(middlewareStub.next).to.have.been.calledOnce;
       });
     });
 
@@ -198,7 +195,7 @@ describe('Authentication:', () => {
       });
 
       it('should continue if document is public and user is not owner',
-      (done) => {
+      () => {
         res = buildResponse();
         req = httpMocks.createRequest({
           method: 'GET',
@@ -206,17 +203,16 @@ describe('Authentication:', () => {
           decoded: { roleId: regularUser.roleId },
           params: { id: 3 }
         });
-        const next = () => 'called';
-
-        const spy = chai.spy(next);
-        expect(spy()).to.equal('called');
-        expect(spy).to.have.been.called();
-        done();
-        Authentication.checkDocumentOwner(req, res, next);
+        const middlewareStub = {
+          next: () => {}
+        };
+        sinon.spy(middlewareStub, 'next');
+        Authentication.checkDocumentOwner(req, res, middlewareStub.next);
+        expect(middlewareStub.next).to.have.been.calledOnce;
       });
 
       it('should continue if user is document owner',
-      (done) => {
+      () => {
         res = buildResponse();
         req = httpMocks.createRequest({
           method: 'GET',
@@ -224,17 +220,17 @@ describe('Authentication:', () => {
           decoded: { roleId: regularUser.roleId },
           params: { id: 4 }
         });
-        const next = () => 'called';
 
-        const spy = chai.spy(next);
-        expect(spy()).to.equal('called');
-        expect(spy).to.have.been.called();
-        done();
-        Authentication.checkDocumentOwner(req, res, next);
+        const middlewareStub = {
+          next: () => {}
+        };
+        sinon.spy(middlewareStub, 'next');
+        Authentication.checkDocumentOwner(req, res, middlewareStub.next);
+        expect(middlewareStub.next).to.have.been.calledOnce;
       });
 
       it('should continue if user is admin',
-      (done) => {
+      () => {
         res = buildResponse();
         req = httpMocks.createRequest({
           method: 'GET',
@@ -242,13 +238,12 @@ describe('Authentication:', () => {
           decoded: { roleId: adminUser.roleId },
           params: { id: 4 }
         });
-        const next = () => 'called';
-
-        const spy = chai.spy(next);
-        expect(spy()).to.equal('called');
-        expect(spy).to.have.been.called();
-        done();
-        Authentication.checkDocumentOwner(req, res, next);
+        const middlewareStub = {
+          next: () => {}
+        };
+        sinon.spy(middlewareStub, 'next');
+        Authentication.checkDocumentOwner(req, res, middlewareStub.next);
+        expect(middlewareStub.next).to.have.been.calledOnce;
       });
     });
 
@@ -270,7 +265,6 @@ describe('Authentication:', () => {
             .equal('An error occured. Ensure your parameters are valid!');
           done();
         });
-
         Authentication.checkCurrentUser(req, res);
       });
 
@@ -283,13 +277,11 @@ describe('Authentication:', () => {
           decoded: { roleId: regularUser.roleId },
           params: { id: 12345 }
         });
-
         res.on('end', () => {
           expect(res.statusCode).to.equal(404);
           expect(res._getData().message).to.equal('User Not Found');
           done();
         });
-
         Authentication.checkCurrentUser(req, res);
       });
 
@@ -302,7 +294,7 @@ describe('Authentication:', () => {
           decoded: { roleId: regularUser.roleId, userId: regularUser.id },
           params: { id: 3 }
         });
-
+        
         res.on('end', () => {
           expect(res.statusCode).to.equal(403);
           expect(res._getData().message).to
@@ -313,7 +305,7 @@ describe('Authentication:', () => {
       });
 
       it('should continue if userid is current user',
-      (done) => {
+      () => {
         res = buildResponse();
         req = httpMocks.createRequest({
           method: 'GET',
@@ -321,17 +313,16 @@ describe('Authentication:', () => {
           decoded: { roleId: regularUser.roleId, userId: regularUser.id },
           params: { id: 2 }
         });
-        const next = () => 'called';
-
-        const spy = chai.spy(next);
-        expect(spy()).to.equal('called');
-        expect(spy).to.have.been.called();
-        done();
-        Authentication.checkCurrentUser(req, res, next);
+        const middlewareStub = {
+          next: () => {}
+        };
+        sinon.spy(middlewareStub, 'next');
+        Authentication.checkCurrentUser(req, res, middlewareStub.next);
+        expect(middlewareStub.next).to.have.been.calledOnce;
       });
 
       it('should continue if user is admin',
-      (done) => {
+      () => {
         res = buildResponse();
         req = httpMocks.createRequest({
           method: 'GET',
@@ -339,13 +330,12 @@ describe('Authentication:', () => {
           decoded: { roleId: adminUser.roleId, userId: adminUser.id },
           params: { id: 3 }
         });
-        const next = () => 'called';
-
-        const spy = chai.spy(next);
-        expect(spy()).to.equal('called');
-        expect(spy).to.have.been.called();
-        done();
-        Authentication.checkCurrentUser(req, res, next);
+        const middlewareStub = {
+          next: () => {}
+        };
+        sinon.spy(middlewareStub, 'next');
+        Authentication.checkCurrentUser(req, res, middlewareStub.next);
+        expect(middlewareStub.next).to.have.been.calledOnce;
       });
     });
   });
