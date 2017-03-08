@@ -211,7 +211,14 @@ The following features make up the Document Management System API:
 - Send data with valid `term` query in the `URL`; for example, to search for documents that contain 'tia', send `/api/search/documents?term=tia`. 
 - An array of `public` as well as personal documents matching the search term is returned.   
 
-### _**Contributing**_
+#### Limitations:
+The limitations to the Document Management System API are as follows:
+
+* Users can only create plain textual documents and retrieve same when needed. 
+* Users cannot share documents with people, but can make document `public` to make it available to other users.
+* Users cannot delete their accounts unless via the action of an admin of the system.
+
+#### _**Contributing**_
 Contributors are welcome to further enhance the features of this API by contributing to its development. The following guidelines should guide you in contributing to this project:
 
 1. Fork the repository.
