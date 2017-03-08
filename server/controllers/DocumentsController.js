@@ -1,7 +1,5 @@
 import db from '../models';
-import Helper from '../helpers/Helper';
-
-let pagination;
+import ControllerHelper from '../helpers/ControllerHelper';
 
 /**
  * DocumentsController class to create and manage documents
@@ -45,7 +43,7 @@ class DocumentsController {
           db.Document
             .findAndCountAll(query)
             .then((documents) => {
-              pagination = Helper.pagination(
+              const pagination = ControllerHelper.pagination(
                 query.limit, query.offset, documents.count
               );
               res.status(200).send({
@@ -59,7 +57,7 @@ class DocumentsController {
           db.Document
             .findAndCountAll(query)
             .then((documents) => {
-              pagination = Helper.pagination(
+              const pagination = ControllerHelper.pagination(
                 query.limit, query.offset, documents.count
               );
               res.status(200).send({
@@ -176,7 +174,7 @@ class DocumentsController {
         db.Document
           .findAndCountAll(query)
           .then((documents) => {
-            pagination = Helper.pagination(
+            const pagination = ControllerHelper.pagination(
               query.limit, query.offset, documents.count
             );
             res.status(200).send({

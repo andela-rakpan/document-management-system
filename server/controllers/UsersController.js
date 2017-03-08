@@ -1,10 +1,8 @@
 import jwt from 'jsonwebtoken';
 import db from '../models';
-import Helper from '../helpers/Helper';
+import ControllerHelper from '../helpers/ControllerHelper';
 
 const secret = process.env.SECRET || 'my secret key';
-let pagination;
-
 /**
  * UsersController class to create and manage users
  */
@@ -103,7 +101,7 @@ class UsersController {
     db.User
       .findAndCountAll(query)
       .then((users) => {
-        pagination = Helper.pagination(
+        const pagination = ControllerHelper.pagination(
           query.limit, query.offset, users.count
         );
         res.status(200).send({
@@ -137,7 +135,7 @@ class UsersController {
     db.Document
       .findAndCountAll(query)
       .then((documents) => {
-        pagination = Helper.pagination(
+        const pagination = ControllerHelper.pagination(
           query.limit, query.offset, documents.count
         );
         res.status(200).send({

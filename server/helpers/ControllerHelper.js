@@ -2,7 +2,7 @@
 /**
  * Helpers class for Controllers
  */
-class Helper {
+class ControllerHelper {
 
   /**
    * Resets the database models
@@ -32,4 +32,4 @@ class Helper {
   }
 }
 
-export default Helper;
+export default ControllerHelper;

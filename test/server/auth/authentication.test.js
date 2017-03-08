@@ -294,7 +294,7 @@ describe('Authentication:', () => {
           decoded: { roleId: regularUser.roleId, userId: regularUser.id },
           params: { id: 3 }
         });
-        
+
         res.on('end', () => {
           expect(res.statusCode).to.equal(403);
           expect(res._getData().message).to

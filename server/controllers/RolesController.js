@@ -1,7 +1,5 @@
 import db from '../models';
-import Helper from '../helpers/Helper';
-
-let pagination;
+import ControllerHelper from '../helpers/ControllerHelper';
 
 /**
  * RolesController class to create and manage roles
@@ -37,7 +35,7 @@ class RolesController {
     db.Role
       .findAndCountAll(query)
       .then((roles) => {
-        pagination = Helper.pagination(
+        const pagination = ControllerHelper.pagination(
           query.limit, query.offset, roles.count
         );
         res.status(200).send({
