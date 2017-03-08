@@ -93,18 +93,6 @@ describe('Document API:', () => {
             done();
           });
       });
-
-      it('should not create a document if document already exists', (done) => {
-        request.post('/api/documents')
-          .send(privateDocument)
-          .set({
-            Authorization: regularUserToken
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(400);
-            done();
-          });
-      });
     });
 
     // GET requests - Retrieve all documents

@@ -60,18 +60,5 @@ describe('Document MODEL:', () => {
         });
       });
     });
-
-    describe('Unique Fields Validation', () => {
-      it('ensures a document is unique', (done) => {
-        model.Document.create(documentParams)
-          .then(() => {
-            model.Document.create(documentParams)
-              .catch((error) => {
-                expect(/UniqueConstraintError/.test(error.name)).to.be.true;
-                done();
-              });
-          });
-      });
-    });
   });
 });
